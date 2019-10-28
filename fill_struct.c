@@ -6,7 +6,7 @@
 /*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/10/28 20:28:48 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/10/28 21:00:41 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,18 +74,20 @@ int		fill_n(char *str)
 {
 	short int i;
 	short int j;
+	short int start;
 	int n;
 
 	i = 0;
 	j = 0;
 	n = 65536;
+	start = 0;
 	while (i < 20)
 	{
 		if (i % 5 == 0)
 		{
 			if (i > 9)
 			{
-				if (!(check_bit(n, 0) && check_bit(n, 1) && !check_bit(n , 4)))
+				if (!(check_bit(n, start) && check_bit(n, start + 1) && !check_bit(n , start + 4)))
 					j = 0;
 				else
 					j--;
@@ -97,6 +99,8 @@ int		fill_n(char *str)
 			j++;
 		if (str[i] == '#')
 		{
+			if (start == 0)
+				start = i;
 			set_bit(&n, j + 4 * (i / 5));
 			j++;
 		}
