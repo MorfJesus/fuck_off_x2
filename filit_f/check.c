@@ -6,9 +6,16 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 17:49:22 by acarole           #+#    #+#             */
-/*   Updated: 2019/10/27 22:05:59 by acarole          ###   ########.fr       */
+/*   Updated: 2019/10/28 20:17:15 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+void	initialization(int *i, int *numb_of_blocks, int *buf)
+{
+	*i = 0;
+	*numb_of_blocks = 0;
+	*buf = 0;
+}
 
 int		ft_check_square(char *ptr)
 {
@@ -16,13 +23,11 @@ int		ft_check_square(char *ptr)
 	int j;
 	int numb_of_blocks;
 
-	i = 0;
-	numb_of_blocks = 0;
-	j = 0;
+	initialization(&i, &numb_of_blocks, &j);
 	while (ptr[i] && numb_of_blocks < 26)
 	{
 		j = 0;
-		while (ptr[i] && ptr[i] != '\n')
+		while (ptr[i++] && ptr[i] != '\n')
 		{
 			j++;
 			i++;
@@ -36,10 +41,8 @@ int		ft_check_square(char *ptr)
 			i++;
 		}
 	}
-	if ((i - numb_of_blocks) % 20 || (j % 4) || (numb_of_blocks > 26) || (ptr[0] == 0)
-			|| (i != 0 && ptr[i] == '\0' && ptr[i - 1] == '\n'))
-		return (1);
-	return (0);
+	return (((i - numb_of_blocks) % 20 || (j % 4) || (numb_of_blocks > 26)
+	|| (ptr[0] == 0) || (i != 0 && ptr[i] == '\0' && ptr[i - 1] == '\n')));
 }
 
 int		top_botom(char *ptr, int i, int numb_of_blocks)
@@ -69,10 +72,8 @@ int		connactions_count(char *ptr)
 	int count_gratings;
 	int numb_of_blocks;
 
-	i = 0;
 	count_connection = 0;
-	count_gratings = 0;
-	numb_of_blocks = 0;
+	initialization(&i, &numb_of_blocks, &count_gratings);
 	while (ptr[i])
 	{
 		if (!(ptr[i] == '\n' || ptr[i] == '#' || ptr[i] == '.'))
@@ -80,8 +81,7 @@ int		connactions_count(char *ptr)
 		if (ptr[i] == '#')
 			count_gratings++;
 		count_connection += top_botom(ptr, i, numb_of_blocks);
-		i++;
-		if ((i - numb_of_blocks) % 20 == 0)
+		if (((++i) - numb_of_blocks) % 20 == 0)
 		{
 			numb_of_blocks++;
 			if (count_gratings != 4 || count_connection < 6)
