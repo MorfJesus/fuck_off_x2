@@ -6,7 +6,7 @@
 /*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/10/27 22:14:06 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/10/28 20:28:48 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@
 void set_bit(int *num, short int pos)
 {
 	*num |= (1 << (pos));
+}
+
+int check_bit(int num, short int pos)
+{
+	return (num & 1 << pos);
 }
 
 void debug(int n)
@@ -40,17 +45,61 @@ void debug(int n)
 	printf("\n");
 }
 
+void debug_b(int n)
+{
+	while (n)
+	{
+    if (n & 1)
+        printf("1");
+    else
+        printf("0");
+    n >>= 1;
+	}
+	printf("\n");
+}
+
+int check_i(char *str, int i)
+{
+	if (str[i] == '.')
+	{
+		if (i >= 5 && str[i - 5] == '#')
+				return (1);
+		if (i + 5 < 19 && str[i + 5] == '#')
+			return (1);
+	}
+	return (0);
+}
+
 int		fill_n(char *str)
 {
 	short int i;
+	short int j;
 	int n;
 
 	i = 0;
+	j = 0;
 	n = 65536;
 	while (i < 20)
 	{
+		if (i % 5 == 0)
+		{
+			if (i > 9)
+			{
+				if (!(check_bit(n, 0) && check_bit(n, 1) && !check_bit(n , 4)))
+					j = 0;
+				else
+					j--;
+			}
+			else
+				j = 0;
+		}
+		if (check_i(str, i))
+			j++;
 		if (str[i] == '#')
-			set_bit(&n, i - ((i + 1) / 5));
+		{
+			set_bit(&n, j + 4 * (i / 5));
+			j++;
+		}
 		i++;
 	}
 	debug(n);
@@ -127,6 +176,9 @@ t_fill *fill(char *str)
 int main()
 {
 	char *str;
-	str = ft_strdup("...#\n...#\n...#\n...#\n\n....\n....\n....\n####\n\n.###\n...#\n....\n....\n\n....\n..##\n.##.\n....");
+	str = ft_strdup("##..\n.#..\n.#..\n....\n\n.#..\n###.\n....\n....\n");
 	fill(str);
+
+	//debug_b(17);
+//	debug_b(check_bit(17, 0));
 }
