@@ -6,7 +6,7 @@
 /*   By: acarole <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/14 16:08:06 by acarole           #+#    #+#             */
-/*   Updated: 2019/09/21 14:13:07 by acarole          ###   ########.fr       */
+/*   Updated: 2019/10/28 20:35:20 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ typedef struct		s_list
 	size_t			content_size;
 	struct s_list	*next;
 }					t_list;
-
+int					get_next_line(int fd, char **line);
 t_list				*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
 short int			ft_islower(int c);
 short int			ft_isupper(int c);

@@ -1,14 +1,12 @@
-#include "check.c"
+#include "fillit.h"
 #include <stdio.h>
 #include<fcntl.h>
-#include "get_next_line.h"
 
 int main(void)
 {
-  //char ptr[1000] = "....\n##..\n.#..\n.#..\n\n....\n##..\n.#..\n.#..\n\n....\n##..\n.#..\n.#..\n\n....\n##..\n.#..\n.#..\n\n....\n##..\n.#..\n.#..\n\n....\n##..\n.#..\n.#..\n\n";
- 	char *ptr;
-  char *str;
-  int fd;
+	char *ptr;
+	char *str;
+	int fd;
   	 fd = open("example", O_RDONLY);
   	// printf("%s",str);
   	 str = ft_strnew(1);
@@ -25,6 +23,8 @@ int main(void)
     {
        printf("shit");
     }
+	printf("\n\n\n");
+	fill(str);
     printf("\n");
     return (0);
 }

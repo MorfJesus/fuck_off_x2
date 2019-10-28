@@ -6,9 +6,11 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 17:49:22 by acarole           #+#    #+#             */
-/*   Updated: 2019/10/28 20:17:15 by acarole          ###   ########.fr       */
+/*   Updated: 2019/10/28 20:36:56 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "fillit.h"
 
 void	initialization(int *i, int *numb_of_blocks, int *buf)
 {
