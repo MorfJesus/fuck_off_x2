@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fill_struct.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
+/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/10/28 21:49:45 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/02 16:48:45 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,16 +76,22 @@ int		fill_n(char *str)
 	short int j;
 	short int start;
 	int n;
+	int k;
+	int p;
 
 	i = 0;
 	j = 0;
+	p = 0;
 	n = 65536;
+	k = 0;
 	start = -1;
 	while (i < 20)
 	{
 		if (i % 5 == 0)
 		{
-			if (i > start + 9)
+			if (p != 0)
+				k++;
+			if (k >= (start + 8) / 4)
 			{
 				if (!(check_bit(n, start) && check_bit(n, start + 1) && !check_bit(n , start + 4)))
 					j = 0;
@@ -99,10 +105,10 @@ int		fill_n(char *str)
 			j++;
 		if (str[i] == '#')
 		{
+			p = 1;
 			if (start == -1)
-				start = i - i / 4;
-			printf("start: %d\n", start);
-			set_bit(&n, j + 4 * (i / 5));
+				start = j + 4 * k;
+			set_bit(&n, j + 4 * k);
 			j++;
 		}
 		i++;
@@ -148,7 +154,6 @@ t_fill *add_list(t_fill *list, char *str)
 	new->n = fill_n(str);
 	new->next = 0;
 	set_sizes(str, &(new->width), &(new->height));
-	printf("width: %d\theight: %d\n", new->width, new->height);
 	if (!list)
 		return(new);
 	else
@@ -178,12 +183,12 @@ t_fill *fill(char *str)
 	return (list);
 }
 
-//int main()
-//{
-//	char *str;
-//	str = ft_strdup("##..\n.#..\n.#..\n....\n\n.#..\n###.\n....\n....\n");
-//	fill(str);
+// int main()
+// {
+// 	char *str;
+// 	printf("%s\n", str = ft_strdup("...#\n...#\n...#\n...#\n\n....\n....\n....\n####\n\n.###\n...#\n....\n....\n\n....\n..##\n.##.\n....\n\n....\n.##.\n.##.\n....\n\n....\n....\n##..\n.##.\n\n##..\n.#..\n.#..\n....\n\n....\n###.\n.#..\n...."));
+// 	fill(str);
 //
-//	//debug_b(17);
-//	debug_b(check_bit(17, 0));
-//}
+// 	//debug_b(17);
+// 	//debug_b(check_bit(17, 0));
+// }
