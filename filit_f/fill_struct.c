@@ -3,54 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   fill_struct.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
+/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/02 17:29:09 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/02 20:40:37 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
 #include "libft/libft.h"
 
-void set_bit(int *num, short int pos)
-{
-	*num |= (1 << (pos));
-}
-
-int check_bit(int num, short int pos)
-{
-	return (num & 1 << pos);
-}
-
-void debug(int n)
-{
-	int i;
-
-	i = 0;
-	while (n)
-	{
-		if (i == 4)
-		{
-			printf("\n");
-			i = 0;
-		}
-    if (n & 1)
-        printf("1");
-    else
-        printf("0");
-    n >>= 1;
-		i++;
-	}
-	printf("\n");
-}
-
-int check_i(char *str, int i)
+int		check_i(char *str, int i)
 {
 	if (str[i] == '.')
 	{
 		if (i >= 5 && str[i - 5] == '#')
-				return (1);
+			return (1);
 		if (i + 5 < 19 && str[i + 5] == '#')
 			return (1);
 	}
@@ -59,12 +27,12 @@ int check_i(char *str, int i)
 
 int		fill_n(char *str)
 {
-	short int i;
-	short int j;
-	short int start;
-	int n;
-	int k;
-	int p;
+	short int	i;
+	short int	j;
+	short int	start;
+	int			n;
+	int			k;
+	int			p;
 
 	i = 0;
 	j = 0;
@@ -80,7 +48,8 @@ int		fill_n(char *str)
 				k++;
 			if (k >= (start + 8) / 4)
 			{
-				if (!(check_bit(n, start) && check_bit(n, start + 1) && !check_bit(n , start + 4)))
+				if (!(check_bit(n, start) && check_bit(n, start + 1)
+							&& !check_bit(n, start + 4)))
 					j = 0;
 				else
 					j--;
@@ -100,11 +69,10 @@ int		fill_n(char *str)
 		}
 		i++;
 	}
-	debug(n);
 	return (n);
 }
 
-void set_sizes(char *str, short int *width, short int *height)
+void	set_sizes(char *str, short int *width, short int *height)
 {
 	short int i;
 	short int j;
@@ -128,22 +96,23 @@ void set_sizes(char *str, short int *width, short int *height)
 		}
 		if (width2 > *width)
 			*width = width2;
-			i++;
+		i++;
 	}
 }
 
-t_fill *add_list(t_fill *list, char *str)
+t_fill	*add_list(t_fill *list, char *str)
 {
 	t_fill *tmp;
 	t_fill *new;
 
-	new = (t_fill *)malloc(sizeof(t_fill));
+	if (!(new = (t_fill *)malloc(sizeof(t_fill))))
+		return(NULL);
 	new->n = fill_n(str);
 	new->next = 0;
 	new->i = 0;
 	set_sizes(str, &(new->width), &(new->height));
 	if (!list)
-		return(new);
+		return (new);
 	else
 	{
 		tmp = list;
@@ -154,11 +123,11 @@ t_fill *add_list(t_fill *list, char *str)
 	return (list);
 }
 
-t_fill *fill(char *str)
+t_fill	*fill(char *str)
 {
-	int len;
-	char *str2;
-	t_fill *list;
+	int		len;
+	char	*str2;
+	t_fill	*list;
 
 	list = 0;
 	str2 = str;
@@ -170,13 +139,3 @@ t_fill *fill(char *str)
 	}
 	return (list);
 }
-
-// int main()
-// {
-// 	char *str;
-// 	printf("%s\n", str = ft_strdup("...#\n...#\n...#\n...#\n\n....\n....\n....\n####\n\n.###\n...#\n....\n....\n\n....\n..##\n.##.\n....\n\n....\n.##.\n.##.\n....\n\n....\n....\n##..\n.##.\n\n##..\n.#..\n.#..\n....\n\n....\n###.\n.#..\n...."));
-// 	fill(str);
-//
-// 	//debug_b(17);
-// 	//debug_b(check_bit(17, 0));
-// }
