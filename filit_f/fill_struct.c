@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/02 22:13:28 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/02 23:38:21 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,13 +112,17 @@ t_fill	*add_list(t_fill *list, char *str)
 	new->i = 0;
 	set_sizes(str, &(new->width), &(new->height));
 	if (!list)
+	{
+		new->prev = 0;
 		return (new);
+	}
 	else
 	{
 		tmp = list;
 		while (tmp->next)
 			tmp = tmp->next;
 		tmp->next = new;
+		new->prev = tmp;
 	}
 	return (list);
 }

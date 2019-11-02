@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:19:24 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/02 22:13:31 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/02 23:37:40 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ typedef struct		s_fill
 	short int				i;
 	int							n;
 	struct s_fill 	*next;
+	struct s_fill 	*prev;
 }					t_fill;
 
 void	initialization(int *i, int *numb_of_blocks, int *buf);

@@ -170,6 +170,12 @@ int main(void)
 		else
 			tmp = tmp->next;
 	}
+	// tmp = list->next->next->next->next;
+	// while (tmp)
+	// {
+	// 	debug_b(tmp->n, 16);
+	// 	tmp = tmp->prev;
+	// }
 	i = 0;
 	while(i < border)
 	{
