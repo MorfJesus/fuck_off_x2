@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fill_struct.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
+/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/02 16:48:45 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/02 17:29:09 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,19 +41,6 @@ void debug(int n)
         printf("0");
     n >>= 1;
 		i++;
-	}
-	printf("\n");
-}
-
-void debug_b(int n)
-{
-	while (n)
-	{
-    if (n & 1)
-        printf("1");
-    else
-        printf("0");
-    n >>= 1;
 	}
 	printf("\n");
 }
@@ -153,6 +140,7 @@ t_fill *add_list(t_fill *list, char *str)
 	new = (t_fill *)malloc(sizeof(t_fill));
 	new->n = fill_n(str);
 	new->next = 0;
+	new->i = 0;
 	set_sizes(str, &(new->width), &(new->height));
 	if (!list)
 		return(new);
