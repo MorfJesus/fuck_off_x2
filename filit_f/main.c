@@ -2,6 +2,55 @@
 #include <stdio.h>
 #include<fcntl.h>
 
+void draw_dick(t_fill *list, char *str, int border, char c)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	while (i < 16)
+	{
+		if (i % 4 == 0 && i != 0)
+			j++;
+		if (check_bit(list->n, i))
+			str[i % 4 + list->i + j * border] = c;
+		i++;
+	}
+}
+
+void hard_draw(t_fill *list, short border)
+{
+	char str[border * border]; 
+	int i;
+	char c;
+	int len;
+
+	i = 0;
+	c = 'A';
+	len = border * border;
+	while (i < len)
+	{
+		str[i] = '.';
+		i++;
+	}
+	while (list)
+	{
+		draw_dick(list, str, border, c);
+		c++;
+		printf("index: %d\n", list->i);
+		list = list->next;
+	}
+	i = 0;
+	while (i < len)
+	{
+		if (i % border == 0 && i != 0)
+			ft_putchar('\n');
+		ft_putchar(str[i]);
+		i++;
+	}
+}
+
 void debug_b(int n, int border)
 {
 	while (border && n >> 1)
@@ -23,7 +72,6 @@ void draw_in(t_fill *list, short int *t, short int x, short int y)
 
 	j = -1;
 	i = 0;
-	list->i = x;
 	while(i < 16)
 	{
 		if (i % 4 == 0)
@@ -34,7 +82,7 @@ void draw_in(t_fill *list, short int *t, short int x, short int y)
 	}
 }
 
-int check_tet(t_fill *list, short int *t, short int x, short int y, short int border)
+int check_tet(t_fill *list, short int *t, short int x, short int y)
 {
 	short int i;
 	short int j;
@@ -66,7 +114,7 @@ int main(void)
 	short int placed;
 
 	i = 0;
-	border = 1;
+	border = 5;
 	while (i < 14)
 	{
 		t[i] = 16384;
@@ -104,19 +152,21 @@ int main(void)
 			j = 0;
 			while (j < border)
 			{
-				if (check_tet(tmp, t, j, i, border) && !(i + tmp->height > border || j + tmp->width > border))
+				if (check_tet(tmp, t, j, i) && !(i + tmp->height > border || j + tmp->width > border))
 				{
+					printf("I: %d\tJ: %d\n", i, j);
+					tmp->i = j + i * border;
 					draw_in(tmp, t, j, i);
-					placed = 1;
+					j = -1;
 					break;
 				}
 				j++;
 			}
-			if (placed)
+			if (j == -1)
 				break;
 			i++;
 		}
-		if (!placed)
+		if (j != -1)
 			border++;
 		else
 			tmp = tmp->next;
@@ -127,5 +177,6 @@ int main(void)
 		debug_b(t[i], border);
 		i++;
 	}
+	hard_draw(list, border);
     return (0);
 }
