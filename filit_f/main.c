@@ -38,7 +38,6 @@ void hard_draw(t_fill *list, short border)
 	{
 		draw_dick(list, str, border, c);
 		c++;
-		printf("index: %d\n", list->i);
 		list = list->next;
 	}
 	i = 0;
@@ -114,7 +113,7 @@ int main(void)
 	short int placed;
 
 	i = 0;
-	border = 5;
+	border = 7;
 	while (i < 14)
 	{
 		t[i] = 16384;
