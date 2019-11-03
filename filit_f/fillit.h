@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fillit.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
+/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:19:24 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/02 23:37:40 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/03 16:08:31 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ typedef struct		s_fill
 	short int				height;
 	short int				width;
 	short int				i;
+	short int				j;
+	short int				border;
 	int							n;
 	struct s_fill 	*next;
 	struct s_fill 	*prev;

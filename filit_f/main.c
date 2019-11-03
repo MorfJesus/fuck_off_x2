@@ -21,7 +21,7 @@ void draw_dick(t_fill *list, char *str, int border, char c)
 
 void hard_draw(t_fill *list, short border)
 {
-	char str[border * border]; 
+	char str[border * border];
 	int i;
 	char c;
 	int len;
@@ -64,6 +64,25 @@ void debug_b(int n, int border)
 	printf("\n");
 }
 
+void debug(int n)
+{
+	int i;
+
+	i = 0;
+	while (n >> 1)
+	{
+		if (i % 4 == 0 && i != 0)
+			printf("\n");
+    if (n & 1)
+        printf("1");
+    else
+        printf("0");
+    n >>= 1;
+		i++;
+	}
+	printf("\n");
+}
+
 void draw_in(t_fill *list, short int *t, short int x, short int y)
 {
 	short int i;
@@ -99,8 +118,63 @@ int check_tet(t_fill *list, short int *t, short int x, short int y)
 	return (1);
 }
 
+void drawer(short *t, int border)
+{
+	int i;
+
+	i = 0;
+	while(i < border)
+	{
+		debug_b(t[i], border);
+		i++;
+	}
+}
+
+void solver(t_fill *tmp, short *t, short border, short old_border)
+{
+	short i;
+	short j;
+	short t2[14];
+
+	//i = tmp->i;
+	i = 0;
+	while (i < border)
+	{
+		// j = tmp->j;
+		// if (tmp->j != 0)
+		// 	j++;
+		j = 0;
+		while (j < border)
+		{
+			if (check_tet(tmp, t, j, i) && !(i + tmp->height > border || j + tmp->width > border))
+			{
+				ft_memmove(t2, t, 28);
+				printf("%s\n", "PLACING:");
+				debug(tmp->n);
+				tmp->border = border;
+				printf("I: %d\tJ: %d\tBorder: %d\nWidth: %d\tHeight: %d\n", i, j, border, tmp->width, tmp->height);
+				tmp->i = i;
+				tmp->j = j;
+				draw_in(tmp, t2, j, i);
+				drawer(t2, border);
+				if (!tmp->next && border < old_border)
+					old_border = border;
+				if (border >= old_border && tmp->prev)
+					solver(tmp->prev, t, tmp->prev->border, old_border);
+				else
+					solver(tmp->next, t2, tmp->border, old_border);
+			}
+			else if (i == border - 1 && j == border - 1)
+				solver(tmp, t, border + 1, old_border);
+			j++;
+		}
+		i++;
+	}
+}
+
 int main(void)
 {
+	static short old_border;
 	char *ptr;
 	char *str;
 	int fd;
@@ -113,7 +187,8 @@ int main(void)
 	short int placed;
 
 	i = 0;
-	border = 7;
+	border = 2;
+	old_border = 15;
 	while (i < 14)
 	{
 		t[i] = 16384;
@@ -142,34 +217,35 @@ int main(void)
 	printf("%d\t%d\n", tmp->height, tmp->width);
 	printf("\n");
     // printf("\n");
-	while (tmp)
-	{
-		placed = 0;
-		i = 0;
-		while (i < border)
-		{
-			j = 0;
-			while (j < border)
-			{
-				if (check_tet(tmp, t, j, i) && !(i + tmp->height > border || j + tmp->width > border))
-				{
-					printf("I: %d\tJ: %d\n", i, j);
-					tmp->i = j + i * border;
-					draw_in(tmp, t, j, i);
-					j = -1;
-					break;
-				}
-				j++;
-			}
-			if (j == -1)
-				break;
-			i++;
-		}
-		if (j != -1)
-			border++;
-		else
-			tmp = tmp->next;
-	}
+	// while (tmp)
+	// {
+	// 	placed = 0;
+	// 	i = 0;
+	// 	while (i < border)
+	// 	{
+	// 		j = 0;
+	// 		while (j < border)
+	// 		{
+	// 			if (check_tet(tmp, t, j, i) && !(i + tmp->height > border || j + tmp->width > border))
+	// 			{
+	// 				printf("I: %d\tJ: %d\n", i, j);
+	// 				tmp->i = j + i * border;
+	// 				draw_in(tmp, t, j, i);
+	// 				j = -1;
+	// 				break;
+	// 			}
+	// 			j++;
+	// 		}
+	// 		if (j == -1)
+	// 			break;
+	// 		i++;
+	// 	}
+	// 	if (j != -1)
+	// 		border++;
+	// 	else
+	// 		tmp = tmp->next;
+	// }
+	solver(tmp, t, border, old_border);
 	// tmp = list->next->next->next->next;
 	// while (tmp)
 	// {
@@ -182,6 +258,7 @@ int main(void)
 		debug_b(t[i], border);
 		i++;
 	}
+	printf("\n");
 	hard_draw(list, border);
     return (0);
 }

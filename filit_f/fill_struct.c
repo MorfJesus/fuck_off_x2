@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fill_struct.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
+/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/02 23:38:21 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/03 17:03:12 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,18 @@ int		check_i(char *str, int i)
 	return (0);
 }
 
-int		fill_n(char *str)
+void		fill_n(char *str, int *n)
 {
 	short int	i;
 	short int	j;
 	short int	start;
-	int			n;
 	int			k;
 	int			p;
 
 	i = 0;
 	j = 0;
 	p = 0;
-	n = 65536;
+	*n = 65536;
 	k = 0;
 	start = -1;
 	while (i < 20)
@@ -48,8 +47,8 @@ int		fill_n(char *str)
 				k++;
 			if (k >= (start + 8) / 4)
 			{
-				if (!(check_bit(n, start) && check_bit(n, start + 1)
-							&& !check_bit(n, start + 4)))
+				if (!(check_bit(*n, start) && check_bit(*n, start + 1)
+							&& !check_bit(*n, start + 4)))
 					j = 0;
 				else
 					j--;
@@ -64,12 +63,11 @@ int		fill_n(char *str)
 			p = 1;
 			if (start == -1)
 				start = j + 4 * k;
-			set_bit(&n, j + 4 * k);
+			set_bit(n, j + 4 * k);
 			j++;
 		}
 		i++;
 	}
-	return (n);
 }
 
 void	set_sizes(char *str, short int *width, short int *height)
@@ -77,6 +75,7 @@ void	set_sizes(char *str, short int *width, short int *height)
 	short int i;
 	short int j;
 	short int width2;
+	short fl;
 
 	i = 0;
 	j = 0;
@@ -86,11 +85,13 @@ void	set_sizes(char *str, short int *width, short int *height)
 	{
 		width2 = 0;
 		j = 0;
+		fl = 0;
 		while (j < 4)
 		{
-			if (str[i * 5 + j] == '#' && width2 == 0)
+			if (str[i * 5 + j] == '#' && fl == 0)
 				(*height)++;
-			if (str[i * 5 + j] == '#')
+			if ((str[i * 5 + j] == '.' && str[i * 5 + j + 1] == '#'
+			&& str[i + 1 * 5 + j] == '#') || (str[i * 5 + j] == '#' && (fl = 1)))
 				width2++;
 			j++;
 		}
@@ -106,10 +107,12 @@ t_fill	*add_list(t_fill *list, char *str)
 	t_fill *new;
 
 	if (!(new = (t_fill *)malloc(sizeof(t_fill))))
-		return(NULL);
-	new->n = fill_n(str);
+		return (NULL);
+	fill_n(str, &(new->n));
 	new->next = 0;
 	new->i = 0;
+	new->j = 0;
+	new->border = 0;
 	set_sizes(str, &(new->width), &(new->height));
 	if (!list)
 	{
