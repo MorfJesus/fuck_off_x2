@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/14 16:08:06 by acarole           #+#    #+#             */
-/*   Updated: 2019/11/02 20:28:56 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/03 18:50:36 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,5 +92,6 @@ char				*ft_strjoin(char const *s1, char const *s2);
 char				*ft_strtrim(char const *s);
 void    		set_bit(int *num, short int pos);
 int					check_bit(int num, short int pos);
+void				clear_bit(int *num, short int pos);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/03 17:03:12 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/03 18:45:32 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,8 +110,8 @@ t_fill	*add_list(t_fill *list, char *str)
 		return (NULL);
 	fill_n(str, &(new->n));
 	new->next = 0;
-	new->i = 0;
-	new->j = 0;
+	new->i = -1;
+	new->j = -1;
 	new->border = 0;
 	set_sizes(str, &(new->width), &(new->height));
 	if (!list)

@@ -6,7 +6,7 @@
 /*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:19:24 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/03 16:08:31 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/03 21:32:25 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,6 @@ int     connactions_count(char *ptr);
 int		check_bit(int num, short int pos);
 void	set_bit(int *num, short int pos);
 t_fill 	*fill(char *str);
+
+short old_border;
 #endif
