@@ -6,7 +6,7 @@
 /*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/03 22:23:42 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/03 22:54:38 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,10 @@ void solver(t_fill *tmp, short *t, short border)
 							list = list->prev;
 						else
 							break;
+					}
+					if ((list->i + list->height >= border && list->j + list->width >= border))
+					{
+						return ;
 					}
 					hard_draw(list, border, fd);
 					close(fd);
