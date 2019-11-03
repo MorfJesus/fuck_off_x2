@@ -6,7 +6,7 @@
 /*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/03 21:44:11 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/03 22:23:42 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,12 +249,12 @@ int main(void)
 	char *str;
 	int fd;
 	short int i;
-	short int j;
+	// short int j;
 	short int border;
 	short int t[14];
 	t_fill *list;
 	t_fill *tmp;
-	short int placed;
+	// short int placed;
 
 	i = 0;
 	border = 2;
