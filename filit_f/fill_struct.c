@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fill_struct.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
+/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/03 18:45:32 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/04 21:23:12 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,11 @@ void	set_sizes(char *str, short int *width, short int *height)
 			if (str[i * 5 + j] == '#' && fl == 0)
 				(*height)++;
 			if ((str[i * 5 + j] == '.' && str[i * 5 + j + 1] == '#'
-			&& str[i + 1 * 5 + j] == '#') || (str[i * 5 + j] == '#' && (fl = 1)))
+			&& str[(i + 1) * 5 + j] == '#') || (str[i * 5 + j] == '#' && (fl = 1)))
+			{
+				printf("I: %d\tJ: %d\tWIDTH: %d\n", i, j, width2);
 				width2++;
+			}
 			j++;
 		}
 		if (width2 > *width)

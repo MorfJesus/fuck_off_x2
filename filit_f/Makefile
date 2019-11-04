@@ -6,11 +6,11 @@
 #    By: acarole <acarole@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/07/15 14:27:56 by acarole           #+#    #+#              #
-#    Updated: 2019/11/04 18:06:23 by acarole          ###   ########.fr        #
+#    Updated: 2019/11/04 21:21:17 by acarole          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = fillit
+NAME = fillit2
 
 SRC =	main.c	fill_struct.c check.c
 
