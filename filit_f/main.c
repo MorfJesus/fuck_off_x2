@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
+/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/03 22:54:38 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/04 18:54:13 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,37 @@ void clear(t_fill *list, short int *t, short int x, short int y)
 	}
 }
 
+short is_last(t_fill *tmp, short border, short t[border])
+{
+	t_fill *pr;
+	short i;
+	short j;
+
+	pr = tmp->prev;
+	i = 0;
+	j = 0;
+	clear(pr, t, pr->j, pr->i);
+	if (pr->i != -1)
+		i = pr->i;
+	else
+		i = 0;
+	while (i < border)
+	{
+		if (pr->j != -1 && pr->i != -1 && i == pr->i)
+			j = pr->j + 1;
+		else
+			j = 0;
+		while (j < border)
+		{
+			if ((check_tet(tmp, t, j, i) && !(i + tmp->height > border || j + tmp->width > border)))
+				return (0);
+			j++;
+		}
+		i++;
+	}
+	return (1);	
+}
+
 void solver(t_fill *tmp, short *t, short border)
 {
 	short i;
@@ -181,8 +212,13 @@ void solver(t_fill *tmp, short *t, short border)
 		clear(tmp, t, tmp->j, tmp->i);
 		printf("AFTER CLEARING:\n");
 		drawer(t, border);
-		printf("OK\n");
+		printf("OK\n\n");
 	}
+	printf("CHECKING: \n");
+	debug(tmp->n);
+	printf("WITH BORDER: %d\tAND I: %d\tJ: %d\nAND MAP: \n\n", border, tmp->i, tmp->j);
+	drawer(t, border);
+	printf("\n");
 	if (tmp->i != -1)
 		i = tmp->i;
 	else
@@ -190,20 +226,23 @@ void solver(t_fill *tmp, short *t, short border)
 	while (i < border)
 	{
 		// j = tmp->j;
-		if (tmp->j != -1 && tmp->i != -1)
+		if (tmp->j != -1 && tmp->i != -1 && i == tmp->i)
 			j = tmp->j + 1;
 		else
 			j = 0;
 		while (j < border)
 		{
+			printf("CHECKING AT: I: %d\tJ: %d\t....THE RESULT: %d\n", i, j, 
+			check_tet(tmp, t, j, i) && !(i + tmp->height > border || j + tmp->width > border));
+			
 			if (check_tet(tmp, t, j, i) && !(i + tmp->height > border || j + tmp->width > border))
 			{
 				ft_memmove(t2, t, 28);
 				printf("%s\n", "PLACING:");
 				debug(tmp->n);
 				tmp->border = border;
-				printf("I: %d\tJ: %d\tBorder: %d\tOLD: %d\nWidth: %d\tHeight: %d\n", i, j, tmp->border,
-				old_border, tmp->width, tmp->height);
+				printf("I: %d\tJ: %d\tBorder: %d\tOLD: %d\n", i, j, tmp->border,
+				old_border);
 				tmp->i = i;
 				tmp->j = j;
 				draw_in(tmp, t2, j, i);
@@ -224,26 +263,41 @@ void solver(t_fill *tmp, short *t, short border)
 						else
 							break;
 					}
-					if ((list->i + list->height >= border && list->j + list->width >= border))
-					{
-						return ;
-					}
 					hard_draw(list, border, fd);
 					close(fd);
 				}
 				if (border >= old_border && tmp->prev)
 					solver(tmp->prev, t, tmp->prev->border);
 				if (border < old_border && tmp->next)
+				{
+					tmp->next->i = -1;
+					tmp->next->j = -1;
 					solver(tmp->next, t2, tmp->border);
+				}
 			}
+			// if ((tmp->i + tmp->height >= border && list->j + tmp->width >= border))
+			// 		{
+			// 			return ;
+			// 		}
 			else if (i == border - 1 && j == border - 1 && border + 1 < old_border)
+			{
+				tmp->i = -1;
+				tmp->j = -1;
+				printf("YA SDELAL!!!1!\n");
 				solver(tmp, t, border + 1);
-			else if (border + 1 >= old_border)
+			}
+			if (tmp->prev && is_last(tmp, border, t) && border + 1 >= old_border)
+				return ;
+			if (i == border - 1 && j == border - 1 && border + 1 >= old_border && tmp->prev)
 				solver(tmp->prev, t, tmp->prev->border);
 			j++;
+			
 		}
 		i++;
 	}
+	// if (tmp->next)
+	// 	solver(tmp, t, border + 1);
+	printf("\n_____EXITED THE FUNCTION_____\n\n");
 }
 
 int main(void)
