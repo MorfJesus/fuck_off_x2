@@ -6,7 +6,7 @@
 /*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/09 21:47:52 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/10 00:13:28 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,12 +226,32 @@ short is_last(t_fill *tmp, short border, short t[border])
 	return (1);
 }
 
-void solver(t_fill *tmp, short *t, short border)
+void find_best_solution(int fd)
+{
+	char *buf;
+	char ptr[52];
+	int i;
+	int num;
+
+	i = 0;
+	num = 0;
+	while(get_next_line(fd, &buf) && buf[0] != 'A')
+	{
+		ptr[i] = buf[0];
+		i++;
+	}
+	//get_next_line(fd, buf);
+	while (get_next_line(fd,&buf))
+	{
+
+	}
+}
+
+void solver(t_fill *tmp, short *t, short border, int fd)
 {
 	short i;
 	short j;
 	short t2[14];
-	int fd;
 	t_fill *list;
 
 	if (tmp->i != -1 && tmp->j != -1)
@@ -280,7 +300,6 @@ void solver(t_fill *tmp, short *t, short border)
 				{
 					old_border = border;
 					list = get_first(tmp);
-					fd = open("creative_solution", O_WRONLY|O_APPEND, S_IRWXU|S_IRWXG|S_IRWXO);
 					while (list)
 					{
 						ft_putnbr_fd(list->i, fd);
@@ -292,39 +311,41 @@ void solver(t_fill *tmp, short *t, short border)
 						else
 							break;
 					}
-					hard_draw(get_first(tmp), border, fd);
+					ft_putchar_fd('\n', fd);
+					//hard_draw(get_first(tmp), border, fd);
 					printf("\n!!!NOTED!!!\n\n");
-					close(fd);
 				}
-				if (border >= old_border && tmp->prev)
-					solver(tmp->prev, t, tmp->prev->border);
-				if (border < old_border && tmp->next)
+				if (border > old_border && tmp->prev)
+					solver(tmp->prev, t, tmp->prev->border, fd);
+				if (border <= old_border && tmp->next)
 				{
 					tmp->next->i = -1;
 					tmp->next->j = -1;
-					solver(tmp->next, t2, tmp->border);
+					solver(tmp->next, t2, tmp->border, fd);
 				}
 			}
 			// if ((tmp->i + tmp->height >= border && list->j + tmp->width >= border))
 			// 		{
 			// 			return ;
 			// 		}
-			else if (i == border - 1 && j == border - 1 && border + 1 < old_border)
+			else
 			{
-				tmp->i = -1;
-				tmp->j = -1;
-				printf("YA SDELAL!!!1!\n");
-				solver(tmp, t, border + 1);
+				if (i == border - 1 && j == border - 1 && border + 1 <= old_border)
+				{
+					tmp->i = -1;
+					tmp->j = -1;
+					printf("YA SDELAL!!!1!\n");
+					solver(tmp, t, border + 1, fd);
+				}
+				if (i == border - 1 && j == border - 1 && tmp->prev && border + 1 >= old_border && is_last(tmp, border, t))
+				{
+					printf("\n!!!EXITED PREMATURELY!!!\n\n");
+					exit(0);
+				}
+				if (i == border - 1 && j == border - 1 && border + 1 > old_border && tmp->prev)
+					solver(tmp->prev, t, tmp->prev->border, fd);
 			}
-			if (i == border - 1 && j == border - 1 && tmp->prev && border + 1 > old_border && is_last(tmp, border, t))
-			{
-				printf("\n!!!EXITED PREMATURELY!!!\n\n");
-				exit(0);
-			}
-			if (i == border - 1 && j == border - 1 && border + 1 > old_border && tmp->prev)
-				solver(tmp->prev, t, tmp->prev->border);
 			j++;
-
 		}
 		i++;
 	}
@@ -339,6 +360,7 @@ int main(void)
 	char *ptr;
 	char *str;
 	int fd;
+	int fd2;
 	short int i;
 	// short int j;
 	short int border;
@@ -406,7 +428,9 @@ int main(void)
 	// 	else
 	// 		tmp = tmp->next;
 	// }
-	solver(tmp, t, border);
+	fd2 = open("creative_solution", O_WRONLY|O_CREAT|O_TRUNC, S_IRWXU|S_IRWXG|S_IRWXO);
+	solver(tmp, t, border, fd2);
+	close(fd2);
 	// tmp = list->next->next->next->next;
 	// while (tmp)
 	// {
