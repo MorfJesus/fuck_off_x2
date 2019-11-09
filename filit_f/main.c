@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
+/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/04 21:08:33 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/09 21:47:52 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,18 @@
 #include <stdio.h>
 #include <unistd.h>
 #include<fcntl.h>
+
+t_fill *get_first(t_fill *list)
+{
+	while (list)
+	{
+		if (list->prev)
+			list = list->prev;
+		else
+			break;
+	}
+	return (list);
+}
 
 void draw_dick(t_fill *list, int border, char str[border][border], char c)
 {
@@ -211,7 +223,7 @@ short is_last(t_fill *tmp, short border, short t[border])
 		}
 		list = list->next;
 	}
-	return (1);	
+	return (1);
 }
 
 void solver(t_fill *tmp, short *t, short border)
@@ -247,9 +259,9 @@ void solver(t_fill *tmp, short *t, short border)
 			j = 0;
 		while (j < border)
 		{
-			printf("CHECKING AT: I: %d\tJ: %d\t....THE RESULT: CHECK_TET:%d\tHEIGHT/WIDTH: %d\n", i, j, 
+			printf("CHECKING AT: I: %d\tJ: %d\t....THE RESULT: CHECK_TET:%d\tHEIGHT/WIDTH: %d\n", i, j,
 			check_tet(tmp, t, j, i), !(i + tmp->height > border || j + tmp->width > border));
-			
+
 			if (check_tet(tmp, t, j, i) && !(i + tmp->height > border || j + tmp->width > border))
 			{
 				ft_memmove(t2, t, 28);
@@ -262,23 +274,25 @@ void solver(t_fill *tmp, short *t, short border)
 				tmp->j = j;
 				draw_in(tmp, t2, j, i);
 				drawer(t2, border);
-				if (!tmp->next && border < old_border)
+				// if (border < old_border)
+				// 	old_border = border;
+				if (!tmp->next && border <= old_border)
 				{
 					old_border = border;
-					list = tmp;
-					fd = open("creative_solution", O_WRONLY|O_CREAT|O_TRUNC|O_APPEND, S_IRWXU|S_IRWXG|S_IRWXO);
+					list = get_first(tmp);
+					fd = open("creative_solution", O_WRONLY|O_APPEND, S_IRWXU|S_IRWXG|S_IRWXO);
 					while (list)
 					{
 						ft_putnbr_fd(list->i, fd);
 						ft_putchar_fd('\n', fd);
 						ft_putnbr_fd(list->j, fd);
 						ft_putchar_fd('\n', fd);
-						if (list->prev)
-							list = list->prev;
+						if (list->next)
+							list = list->next;
 						else
 							break;
 					}
-					hard_draw(list, border, fd);
+					hard_draw(get_first(tmp), border, fd);
 					printf("\n!!!NOTED!!!\n\n");
 					close(fd);
 				}
@@ -302,15 +316,15 @@ void solver(t_fill *tmp, short *t, short border)
 				printf("YA SDELAL!!!1!\n");
 				solver(tmp, t, border + 1);
 			}
-			if (i == border - 1 && j == border - 1 && tmp->prev && border + 1 >= old_border && is_last(tmp, border, t))
+			if (i == border - 1 && j == border - 1 && tmp->prev && border + 1 > old_border && is_last(tmp, border, t))
 			{
 				printf("\n!!!EXITED PREMATURELY!!!\n\n");
 				exit(0);
 			}
-			if (i == border - 1 && j == border - 1 && border + 1 >= old_border && tmp->prev)
+			if (i == border - 1 && j == border - 1 && border + 1 > old_border && tmp->prev)
 				solver(tmp->prev, t, tmp->prev->border);
 			j++;
-			
+
 		}
 		i++;
 	}
