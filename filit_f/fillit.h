@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:19:24 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/10 20:41:05 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/10 22:20:44 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,7 @@ typedef struct		s_fill
 }					t_fill;
 
 void				initialization(int *i, int *numb_of_blocks, int *buf);
-int					ft_check_square(char *ptr);
-int					top_botom(char *ptr, int i, int numb_of_blocks);
-int					connactions_count(char *ptr);
+short int			check_all(char *str);
 int					check_bit(int num, short int pos);
 void				set_bit(int *num, short int pos);
 int					check_i(char *str, int i);
