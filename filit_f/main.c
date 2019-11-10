@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/10 19:12:58 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/10 20:26:39 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -446,7 +446,7 @@ int main(void)
 		i++;
 	}
 	i = 0;
-  	 fd = open("example", O_RDONLY);
+  	 fd = open("example2", O_RDONLY);
   	// printf("%s",str);
   	 str = ft_strnew(1);
   	while(get_next_line(fd, &ptr))

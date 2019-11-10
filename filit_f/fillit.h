@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fillit.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
+/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:19:24 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/03 21:32:25 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/10 20:24:10 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,10 @@ int     top_botom(char *ptr, int i, int numb_of_blocks);
 int     connactions_count(char *ptr);
 int		check_bit(int num, short int pos);
 void	set_bit(int *num, short int pos);
+int		check_i(char *str, int i);
+void	helper_fun1(int k, short int start, short int *j, int n);
+void	helper_fun2(short int *i, short int *j, int *k, int *p);
+void	hepler_fun3(int *n, short int *start, short int *j, int k);
 t_fill 	*fill(char *str);
 
 short old_border;
