@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
+/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/10 18:51:46 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/10 19:12:58 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,7 +240,6 @@ void find_best_solution(int fd, t_fill *list, short border)
 		i++;
 		free(buf);
 	}
-	printf("OK then: %d\n", i);
 	arr[i] = -1;
 	i = 0;
 	while(get_next_line(fd, &buf) == 1)
@@ -248,7 +247,6 @@ void find_best_solution(int fd, t_fill *list, short border)
 		if (buf[0] == 'A')
 		{
 			i = 0;
-			printf("___MET AN A___\n");
 			continue;
 		}
 		if (i % 2 == 0 && ft_atoi(buf) > arr[i])
@@ -293,7 +291,6 @@ void find_best_solution(int fd, t_fill *list, short border)
 		// }
 		else
 			i++;
-		printf("it goes to shit somewhere around here: %d\n", i);
 	}
 	i = 0;
 	tmp = list;
@@ -314,7 +311,7 @@ void find_best_solution(int fd, t_fill *list, short border)
 		printf("list.i: %d\tlist.j: %d\n", list->i, list->j);
 		tmp = tmp->next;
 	}
-	hard_draw(list, border, 2);
+	hard_draw(list, border, 1);
 }
 
 void solver(t_fill *tmp, short *t, short border, int fd)

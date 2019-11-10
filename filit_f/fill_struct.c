@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/04 21:23:12 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/10 19:10:23 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int		check_i(char *str, int i)
 	return (0);
 }
 
-void		fill_n(char *str, int *n)
+void	fill_n(char *str, int *n)
 {
 	short int	i;
 	short int	j;
@@ -70,34 +70,40 @@ void		fill_n(char *str, int *n)
 	}
 }
 
-void	set_sizes(char *str, short int *width, short int *height)
+void	trash_fun(short int i, short int *width2, short int *height, char *str)
 {
-	short int i;
 	short int j;
-	short int width2;
 	short fl;
 
-	i = 0;
 	j = 0;
-	(*width) = 0;
-	(*height) = 0;
-	while (i < 4)
-	{
-		width2 = 0;
-		j = 0;
-		fl = 0;
-		while (j < 4)
+	(*width2) = 0;
+	fl = 0;
+	while (j < 4)
 		{
 			if (str[i * 5 + j] == '#' && fl == 0)
 				(*height)++;
 			if ((str[i * 5 + j] == '.' && str[i * 5 + j + 1] == '#'
-			&& str[(i + 1) * 5 + j] == '#') || (str[i * 5 + j] == '#' && (fl = 1)))
-			{
-				printf("I: %d\tJ: %d\tWIDTH: %d\n", i, j, width2);
-				width2++;
-			}
+			&& str[(i + 1) * 5 + j] == '#') ||
+			(str[i * 5 + j] == '#' && (fl = 1)))
+				(*width2)++;
 			j++;
 		}
+}
+
+void	set_sizes(char *str, short int *width, short int *height)
+{
+	short int i;
+//	short int j;
+	short int width2;
+//	short fl;
+
+	i = 0;
+//	j = 0;
+	(*width) = 0;
+	(*height) = 0;
+	while (i < 4)
+	{
+		trash_fun(i, &width2, height, str);
 		if (width2 > *width)
 			*width = width2;
 		i++;
