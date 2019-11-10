@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/10 22:06:12 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/10 22:22:15 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -424,7 +424,7 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 	}
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	char *ptr;
 	char *str;
@@ -436,6 +436,11 @@ int main(void)
 	t_fill *list;
 	t_fill *tmp;
 
+	if (argc != 2)
+	{
+		ft_putstr("usage: ./fillit [input_file]\n");
+		return (0);
+	}
 	i = 0;
 	border = 2;
 	g_old_border = 15;
@@ -445,13 +450,18 @@ int main(void)
 		i++;
 	}
 	i = 0;
-  	 fd = open("example2", O_RDONLY);
+  	 fd = open(argv[1], O_RDONLY);
   	 str = ft_strnew(1);
   	while(get_next_line(fd, &ptr))
   	{
   		ptr = ft_strjoin(ptr ,"\n");
   		str = ft_strjoin(str ,ptr);
   	}
+	if(!check_all(str))
+	{
+		ft_putstr("error\n");
+		return(0);
+	}
 	list = fill(str);
 	tmp = list;
 	fd2 = open("creative_solution", O_WRONLY|O_CREAT|O_TRUNC, S_IRWXU|S_IRWXG|S_IRWXO);
