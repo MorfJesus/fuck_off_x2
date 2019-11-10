@@ -6,7 +6,7 @@
 /*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/10 00:13:28 by eleanna          ###   ########.fr       */
+/*   Updated: 2019/11/10 18:34:29 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,25 +226,95 @@ short is_last(t_fill *tmp, short border, short t[border])
 	return (1);
 }
 
-void find_best_solution(int fd)
+void find_best_solution(int fd, t_fill *list, short border)
 {
+	short arr[52];
 	char *buf;
-	char ptr[52];
-	int i;
-	int num;
+	short i;
+	t_fill *tmp;
 
 	i = 0;
-	num = 0;
-	while(get_next_line(fd, &buf) && buf[0] != 'A')
+	while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
 	{
-		ptr[i] = buf[0];
+		arr[i] = ft_atoi(buf);
+		i++;
+		free(buf);
+	}
+	printf("OK then: %d\n", i);
+	arr[i] = -1;
+	i = 0;
+	while(get_next_line(fd, &buf) == 1)
+	{
+		if (buf[0] == 'A')
+		{
+			i = 0;
+			printf("___MET AN A___\n");
+			continue;
+		}
+		if (i % 2 == 0 && ft_atoi(buf) > arr[i])
+		{
+			free(buf);
+			while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
+				free(buf);
+			i = 0;
+			continue;
+		}
+		if (i % 2 == 0 && ft_atoi(buf) < arr[i])
+		{
+			arr[i] = ft_atoi(buf);
+			free(buf);
+			i++;
+			while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
+			{
+				arr[i] = ft_atoi(buf);
+				i++;
+				free(buf);
+			}
+			i = 0;
+			continue;
+		}
+		// else if (i % 2 == 0 && ft_atoi(buf) == arr[i])
+		// {
+		// 	if (get_next_line(fd, &buf) == 1 && buf[0] != 'A' && ft_atoi(buf) < arr[i])
+		// 	{
+		// 		i++;
+		// 		arr[i] = ft_atoi(buf);
+		// 		free(buf);
+		// 		i++;
+		// 		while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
+		// 		{
+		// 			arr[i] = ft_atoi(buf);
+		// 			i++;
+		// 			free(buf);
+		// 		}
+		// 		i = 0;
+		// 		continue;
+		// 	}
+		// }
+		else
+			i++;
+		printf("it goes to shit somewhere around here: %d\n", i);
+	}
+	i = 0;
+	tmp = list;
+	while(arr[i] != -1)
+	{
+		if (i % 2 == 0 && i != 0)
+			tmp = tmp->next;
+		if (i % 2 == 0)
+			tmp->i = arr[i];
+		else
+			tmp->j = arr[i];
+		printf("THE RESULT: %d\n", arr[i]);
 		i++;
 	}
-	//get_next_line(fd, buf);
-	while (get_next_line(fd,&buf))
+	tmp = list;
+	while (tmp)
 	{
-
+		printf("list.i: %d\tlist.j: %d\n", list->i, list->j);
+		tmp = tmp->next;
 	}
+	hard_draw(list, border, 2);
 }
 
 void solver(t_fill *tmp, short *t, short border, int fd)
@@ -257,15 +327,15 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 	if (tmp->i != -1 && tmp->j != -1)
 	{
 		clear(tmp, t, tmp->j, tmp->i);
-		printf("AFTER CLEARING:\n");
-		drawer(t, border);
-		printf("OK\n\n");
+		//printf("AFTER CLEARING:\n");
+	//	drawer(t, border);
+		//printf("OK\n\n");
 	}
-	printf("CHECKING: \n");
-	debug(tmp->n);
-	printf("WITH BORDER: %d\tAND I: %d\tJ: %d\tHEIGHT: %d\tWIDTH: %d\nAND MAP: \n\n", border, tmp->i, tmp->j, tmp->height, tmp->width);
-	drawer(t, border);
-	printf("\n");
+	//printf("CHECKING: \n");
+//	debug(tmp->n);
+	//printf("WITH BORDER: %d\tAND I: %d\tJ: %d\tHEIGHT: %d\tWIDTH: %d\nAND MAP: \n\n", border, tmp->i, tmp->j, tmp->height, tmp->width);
+	//drawer(t, border);
+	//printf("\n");
 	if (tmp->i != -1)
 		i = tmp->i;
 	else
@@ -279,8 +349,8 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 			j = 0;
 		while (j < border)
 		{
-			printf("CHECKING AT: I: %d\tJ: %d\t....THE RESULT: CHECK_TET:%d\tHEIGHT/WIDTH: %d\n", i, j,
-			check_tet(tmp, t, j, i), !(i + tmp->height > border || j + tmp->width > border));
+		//	printf("CHECKING AT: I: %d\tJ: %d\t....THE RESULT: CHECK_TET:%d\tHEIGHT/WIDTH: %d\n", i, j,
+		//	check_tet(tmp, t, j, i), !(i + tmp->height > border || j + tmp->width > border));
 
 			if (check_tet(tmp, t, j, i) && !(i + tmp->height > border || j + tmp->width > border))
 			{
@@ -294,8 +364,8 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 				tmp->j = j;
 				draw_in(tmp, t2, j, i);
 				drawer(t2, border);
-				// if (border < old_border)
-				// 	old_border = border;
+				if (border < old_border)
+					old_border = border;
 				if (!tmp->next && border <= old_border)
 				{
 					old_border = border;
@@ -311,8 +381,8 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 						else
 							break;
 					}
-					ft_putchar_fd('\n', fd);
-					//hard_draw(get_first(tmp), border, fd);
+					ft_putstr_fd("A\n", fd);
+					hard_draw(get_first(tmp), border, fd);
 					printf("\n!!!NOTED!!!\n\n");
 				}
 				if (border > old_border && tmp->prev)
@@ -334,11 +404,14 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 				{
 					tmp->i = -1;
 					tmp->j = -1;
-					printf("YA SDELAL!!!1!\n");
+					//printf("YA SDELAL!!!1!\n");
 					solver(tmp, t, border + 1, fd);
 				}
 				if (i == border - 1 && j == border - 1 && tmp->prev && border + 1 >= old_border && is_last(tmp, border, t))
 				{
+					close(fd);
+					fd = open("creative_solution", O_RDONLY);
+					find_best_solution(fd, get_first(tmp), border);
 					printf("\n!!!EXITED PREMATURELY!!!\n\n");
 					exit(0);
 				}
@@ -351,7 +424,7 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 	}
 	// if (tmp->next)
 	// 	solver(tmp, t, border + 1);
-	printf("\n_____EXITED THE FUNCTION_____\n\n");
+	//printf("\n_____EXITED THE FUNCTION_____\n\n");
 }
 
 int main(void)
@@ -378,7 +451,7 @@ int main(void)
 		i++;
 	}
 	i = 0;
-  	 fd = open("example2", O_RDONLY);
+  	 fd = open("example", O_RDONLY);
   	// printf("%s",str);
   	 str = ft_strnew(1);
   	while(get_next_line(fd, &ptr))
@@ -430,7 +503,6 @@ int main(void)
 	// }
 	fd2 = open("creative_solution", O_WRONLY|O_CREAT|O_TRUNC, S_IRWXU|S_IRWXG|S_IRWXO);
 	solver(tmp, t, border, fd2);
-	close(fd2);
 	// tmp = list->next->next->next->next;
 	// while (tmp)
 	// {
@@ -444,6 +516,8 @@ int main(void)
 		debug_b(t[i], border);
 		i++;
 	}
+
+	close(fd2);
 	printf("OK\n");
 	//hard_draw(list, border, 1);
     return (0);
