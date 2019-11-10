@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/10 20:26:39 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/10 20:40:21 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,14 +356,14 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 				debug(tmp->n);
 				tmp->border = border;
 				printf("I: %d\tJ: %d\tBorder: %d\tOLD: %d\n", i, j, tmp->border,
-				old_border);
+				g_old_border);
 				tmp->i = i;
 				tmp->j = j;
 				draw_in(tmp, t2, j, i);
 				drawer(t2, border);
-				if (!tmp->next && border <= old_border)
+				if (!tmp->next && border <= g_old_border)
 				{
-					old_border = border;
+					g_old_border = border;
 					list = get_first(tmp);
 					while (list)
 					{
@@ -380,9 +380,9 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 					//hard_draw(get_first(tmp), border, fd);
 					printf("\n!!!NOTED!!!\n\n");
 				}
-				if (border > old_border && tmp->prev)
+				if (border > g_old_border && tmp->prev)
 					solver(tmp->prev, t, tmp->prev->border, fd);
-				if (border <= old_border && tmp->next)
+				if (border <= g_old_border && tmp->next)
 				{
 					tmp->next->i = -1;
 					tmp->next->j = -1;
@@ -395,14 +395,14 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 			// 		}
 			else
 			{
-				if (i == border - 1 && j == border - 1 && border + 1 <= old_border)
+				if (i == border - 1 && j == border - 1 && border + 1 <= g_old_border)
 				{
 					tmp->i = -1;
 					tmp->j = -1;
 					printf("YA SDELAL!!!1!\n");
 					solver(tmp, t, border + 1, fd);
 				}
-				if (i == border - 1 && j == border - 1 && tmp->prev && border + 1 >= old_border && is_last(tmp, border, t))
+				if (i == border - 1 && j == border - 1 && tmp->prev && border + 1 >= g_old_border && is_last(tmp, border, t))
 				{
 					close(fd);
 					fd = open("creative_solution", O_RDONLY);
@@ -410,7 +410,7 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 					printf("\n!!!EXITED PREMATURELY!!!\n\n");
 					exit(0);
 				}
-				if (i == border - 1 && j == border - 1 && border + 1 > old_border && tmp->prev)
+				if (i == border - 1 && j == border - 1 && border + 1 > g_old_border && tmp->prev)
 					solver(tmp->prev, t, tmp->prev->border, fd);
 			}
 			j++;
@@ -424,7 +424,7 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 
 int main(void)
 {
-	//static short old_border;
+	//static short g_old_border;
 	char *ptr;
 	char *str;
 	int fd;
@@ -439,7 +439,7 @@ int main(void)
 
 	i = 0;
 	border = 2;
-	old_border = 15;
+	g_old_border = 15;
 	while (i < 14)
 	{
 		t[i] = 16384;
