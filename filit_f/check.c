@@ -6,20 +6,20 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 17:49:22 by acarole           #+#    #+#             */
-/*   Updated: 2019/11/10 22:19:53 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/16 23:18:33 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
 
-void	initialization(int *i, int *numb_of_blocks, int *buf)
+void		initialization(int *i, int *numb_of_blocks, int *buf)
 {
 	*i = 0;
 	*numb_of_blocks = 0;
 	*buf = 0;
 }
 
-int		ft_check_square(char *ptr)
+int			ft_check_square(char *ptr)
 {
 	int i;
 	int j;
@@ -47,7 +47,7 @@ int		ft_check_square(char *ptr)
 	|| (ptr[0] == 0) || (i != 0 && ptr[i] == '\0' && ptr[i - 1] == '\n')));
 }
 
-int		top_botom(char *ptr, int i, int numb_of_blocks)
+int			top_botom(char *ptr, int i, int numb_of_blocks)
 {
 	int count_connection;
 
@@ -67,7 +67,7 @@ int		top_botom(char *ptr, int i, int numb_of_blocks)
 	return (count_connection);
 }
 
-int		connections_count(char *ptr)
+int			connections_count(char *ptr)
 {
 	int count_connection;
 	int i;
@@ -98,5 +98,5 @@ int		connections_count(char *ptr)
 
 short int	check_all(char *str)
 {
-	return(!ft_check_square(str) && !connections_count(str));
+	return (!ft_check_square(str) && !connections_count(str));
 }
