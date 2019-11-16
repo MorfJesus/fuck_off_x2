@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_Ne_pidor.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/10 22:58:06 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/16 17:27:05 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -367,6 +367,23 @@ void	display_solver(t_fill *tmp, short border, int fd, t_fill **list)
 	}
 }
 
+void for_solver(int fd, short border, t_fill *tmp)
+{
+	close(fd);
+	fd = open("creative_solution", O_RDONLY);
+	find_best_solution(fd, get_first(tmp), border);
+	exit(0);
+}
+
+void for_solver2(short i, short j, t_fill *tmp, short t2[14])
+{
+	tmp->i = i;
+	tmp->j = j;
+	draw_in(tmp, t2, j, i);
+}
+
+
+
 void solver(t_fill *tmp, short *t, short border, int fd)
 {
 	short i;
@@ -392,9 +409,7 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 			{
 				ft_memmove(t2, t, 28);
 				tmp->border = border;
-				tmp->i = i;
-				tmp->j = j;
-				draw_in(tmp, t2, j, i);
+				for_solver2(i, j, tmp, t2);
 				display_solver(tmp, border, fd, &list);
 				if (border > g_old_border && tmp->prev)
 					solver(tmp->prev, t, tmp->prev->border, fd);
@@ -414,12 +429,7 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 					solver(tmp, t, border + 1, fd);
 				}
 				if (i == border - 1 && j == border - 1 && tmp->prev && border + 1 >= g_old_border && is_last(tmp, border, t))
-				{
-					close(fd);
-					fd = open("creative_solution", O_RDONLY);
-					find_best_solution(fd, get_first(tmp), border);
-					exit(0);
-				}
+					for_solver(fd, border, tmp); 
 				if (i == border - 1 && j == border - 1 && border + 1 > g_old_border && tmp->prev)
 					solver(tmp->prev, t, tmp->prev->border, fd);
 			}
@@ -436,6 +446,11 @@ char	*read_file(char *argv)
 	int		fd;
 
 	fd = open(argv, O_RDONLY);
+	if (fd == -1)
+	{
+		ft_putstr("error\n");
+		return (0);
+	}
   str = ft_strnew(1);
   while(get_next_line(fd, &ptr))
   {
@@ -460,6 +475,8 @@ int		main(int argc, char **argv)
 	}
 	g_old_border = 15;
 	str = read_file(argv[1]);
+	if (str == NULL)
+		return (0);
 	if (!check_all(str))
 	{
 		ft_putstr("error\n");
