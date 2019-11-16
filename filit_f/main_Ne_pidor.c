@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/16 17:27:05 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/16 22:18:52 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include<fcntl.h>
+
+void solver(t_fill *tmp, short *t, short border, int fd);
 
 t_fill *get_first(t_fill *list)
 {
@@ -343,31 +345,36 @@ void find_best_solution(int fd, t_fill *list, short border)
 	hard_draw(list, border, 2);
 }
 
-void	display_solver(t_fill *tmp, short border, int fd, t_fill **list)
+void	display_solver(t_fill *tmp, short border, int fd, short t[14])
 {
+	t_fill *list;
+
+	list = get_first(tmp);
 	if (!tmp->next && border <= g_old_border)
 	{
 		ft_putchar_fd('B', fd);
 		ft_putchar_fd(border + 'A', fd);
 		ft_putchar_fd('\n', fd);
 		g_old_border = border;
-		(*list) = get_first(tmp);
+		list = get_first(tmp);
 		while (list)
 		{
-			ft_putnbr_fd((*list)->i, fd);
+			ft_putnbr_fd(list->i, fd);
 			ft_putchar_fd('\n', fd);
-			ft_putnbr_fd((*list)->j, fd);
+			ft_putnbr_fd(list->j, fd);
 			ft_putchar_fd('\n', fd);
-			if ((*list)->next)
-				(*list) = (*list)->next;
+			if (list->next)
+				list = list->next;
 			else
 				break;
 		}
 		ft_putstr_fd("A\n", fd);
 	}
+	if (border > g_old_border && tmp->prev)
+		solver(tmp->prev, t, tmp->prev->border, fd);
 }
 
-void for_solver(int fd, short border, t_fill *tmp)
+void for_solver1(int fd, short border, t_fill *tmp)
 {
 	close(fd);
 	fd = open("creative_solution", O_RDONLY);
@@ -383,13 +390,26 @@ void for_solver2(short i, short j, t_fill *tmp, short t2[14])
 }
 
 
+void	for_solver3(t_fill *tmp, short border, int fd, short t[14])
+{
+	tmp->i = -1;
+	tmp->j = -1;
+	solver(tmp, t, border + 1, fd);
+}
 
-void solver(t_fill *tmp, short *t, short border, int fd)
+void	for_solver4(short border, t_fill *tmp, int fd, short t2[14])
+{
+	if (border <= g_old_border && tmp->next)
+	{
+		tmp->next->i = -1;
+		tmp->next->j = -1;
+		solver(tmp->next, t2, tmp->border, fd);
+	}
+}
+
+short	set_i(t_fill *tmp, short *t)
 {
 	short i;
-	short j;
-	short t2[14];
-	t_fill *list;
 
 	if (tmp->i != -1 && tmp->j != -1)
 		clear(tmp, t, tmp->j, tmp->i);
@@ -397,45 +417,62 @@ void solver(t_fill *tmp, short *t, short border, int fd)
 		i = tmp->i;
 	else
 		i = 0;
-	while (i < border)
-	{
-		if (tmp->j != -1 && tmp->i != -1 && i == tmp->i)
+	return (i - 1);
+}
+
+short	set_j(t_fill *tmp, short i)
+{
+	short j;
+
+	if (tmp->j != -1 && tmp->i != -1 && i == tmp->i)
 			j = tmp->j + 1;
 		else
 			j = 0;
-		while (j < border)
+		return(j - 1);
+}
+
+void	for_solver5(short border, short t[14], short t2[14], t_fill *tmp)
+{
+	ft_memmove(t2, t, 28);
+	tmp->border = border;
+}
+
+void	triple_solver(t_p index, int fd, t_fill *tmp, short t[14])
+{
+	if (index.i == index.border - 1 && index.j == index.border - 1 &&
+	index.border + 1 <= g_old_border)
+		for_solver3(tmp, index.border, fd, t);
+	if (index.i == index.border - 1 && index.j == index.border - 1
+	&& tmp->prev && index.border + 1 >= g_old_border && is_last(tmp, index.border, t))
+		for_solver1(fd, index.border, tmp); 
+	if (index.i == index.border - 1 && index.j == index.border - 1
+	&& index.border + 1 > g_old_border && tmp->prev)
+		solver(tmp->prev, t, tmp->prev->border, fd);
+}
+
+void solver(t_fill *tmp, short *t, short border, int fd)
+{
+	t_p index;
+	short t2[14];
+
+	index.border = border;
+	index.i = set_i(tmp, t);
+	while (++index.i < border)
+	{
+		index.j = set_j(tmp, index.i);
+		while (++index.j < border)
 		{
-			if (check_tet(tmp, t, j, i) && !(i + tmp->height > border || j + tmp->width > border))
+			if (check_tet(tmp, t, index.j, index.i) &&
+			!(index.i + tmp->height > border || index.j + tmp->width > border))
 			{
-				ft_memmove(t2, t, 28);
-				tmp->border = border;
-				for_solver2(i, j, tmp, t2);
-				display_solver(tmp, border, fd, &list);
-				if (border > g_old_border && tmp->prev)
-					solver(tmp->prev, t, tmp->prev->border, fd);
-				if (border <= g_old_border && tmp->next)
-				{
-					tmp->next->i = -1;
-					tmp->next->j = -1;
-					solver(tmp->next, t2, tmp->border, fd);
-				}
+				for_solver5(border, t, t2, tmp);
+				for_solver2(index.i, index.j, tmp, t2);
+				display_solver(tmp, border, fd, t);
+				for_solver4(border, tmp, fd, t2);
 			}
 			else
-			{
-				if (i == border - 1 && j == border - 1 && border + 1 <= g_old_border)
-				{
-					tmp->i = -1;
-					tmp->j = -1;
-					solver(tmp, t, border + 1, fd);
-				}
-				if (i == border - 1 && j == border - 1 && tmp->prev && border + 1 >= g_old_border && is_last(tmp, border, t))
-					for_solver(fd, border, tmp); 
-				if (i == border - 1 && j == border - 1 && border + 1 > g_old_border && tmp->prev)
-					solver(tmp->prev, t, tmp->prev->border, fd);
-			}
-			j++;
+				triple_solver(index, fd, tmp, t);
 		}
-		i++;
 	}
 }
 
