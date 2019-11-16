@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_Ne_pidor.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
+/*   By: eleanna <eleanna@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/16 22:18:52 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/16 22:23:51 by eleanna          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,26 @@ void draw_dick(t_fill *list, int border, char str[border][border], char c)
 	}
 }
 
+void draw_out(short border, short fd, char str[border][border])
+{
+	short i;
+	short j;
+
+	i = 0;
+	j = 0;
+	while (i < border)
+	{
+		j = 0;
+		while (j < border)
+		{
+			ft_putchar_fd(str[i][j], fd);
+			j++;
+		}
+		ft_putchar_fd('\n', fd);
+		i++;
+	}
+}
+
 void hard_draw(t_fill *list, short border, int fd)
 {
 	char str[border][border];
@@ -71,18 +91,7 @@ void hard_draw(t_fill *list, short border, int fd)
 		c++;
 		list = list->next;
 	}
-	i = 0;
-	while (i < border)
-	{
-		j = 0;
-		while (j < border)
-		{
-			ft_putchar_fd(str[i][j], fd);
-			j++;
-		}
-		ft_putchar_fd('\n', fd);
-		i++;
-	}
+	draw_out(border, fd, str);
 }
 
 void debug_b(int n, int border)
@@ -182,62 +191,62 @@ void clear(t_fill *list, short int *t, short int x, short int y)
 	}
 }
 
+short experiment(short border, short t[border],t_fill *list)
+{
+	short t2[border];
+	short i;
+	short j;
+
+	ft_memmove(t2, t, border * 2);
+	i = -1;
+	j = -1;
+	clear(list, t2, list->j, list->i);
+	if (list->i != -1)
+		i = list->i - 1;
+	else
+		i = -1;
+	while (++i < border)
+	{
+		if (list->j != -1 && list->i != -1 && i == list->i)
+			j = list->j;
+		else
+			j = -1;
+		while (++j < border)
+		{
+			if (!(i + list->height > border || j + list->width > border) && (check_tet(list, t2, j, i)))
+				return (1);
+		}
+	}
+	return (0);
+}
+
 short is_last(t_fill *tmp, short border, short t[border])
 {
 	t_fill *list;
-	short i;
-	short j;
-	short t2[border];
 
-	if (!tmp->prev)
-		return (0);
-	list = tmp;
-	while (list)
-	{
-		if (list->prev)
-			list = list->prev;
-		else
-			break;
-	}
+	list = get_first(tmp);
 	while (list && list != tmp)
 	{
-		ft_memmove(t2, t, border * 2);
-		i = 0;
-		j = 0;
-		clear(list, t2, list->j, list->i);
-		if (list->i != -1)
-			i = list->i;
-		else
-			i = 0;
-		while (i < border)
-		{
-			if (list->j != -1 && list->i != -1 && i == list->i)
-				j = list->j + 1;
-			else
-				j = 0;
-			while (j < border)
-			{
-				if ((check_tet(list, t2, j, i) && !(i + list->height > border || j + list->width > border)))
-					return (0);
-				j++;
-			}
-			i++;
-		}
+		if (experiment(border, t, list))
+			return (0);
 		list = list->next;
 	}
 	return (1);
 }
 
-void find_best_solution(int fd, t_fill *list, short border)
+void skip_rest(int fd, char *buf)
 {
-	short arr[52];
+	free(buf);
+	while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
+		free(buf);
+}
+
+void fill_arr(int fd, int border, short arr[52])
+{
+	int i;
 	char *buf;
-	short i;
-	t_fill *tmp;
-	short fl;
 
 	i = 0;
-	fl = 0;
 	while(1)
 	{
 		get_next_line(fd, &buf);
@@ -254,13 +263,64 @@ void find_best_solution(int fd, t_fill *list, short border)
 			break;
 		}
 		else
-		{
-			free(buf);
-			while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
-				free(buf);
-		}
+			skip_rest(fd, buf);
 	}
+}
+
+void odd_j(int fd, short *i, short arr[52], char *buf)
+{
+	if (ft_atoi(buf) > arr[*i])
+		skip_rest(fd, buf);
+	else if (ft_atoi(buf) > arr[*i])
+	{
+		arr[*i] = ft_atoi(buf);
+		free(buf);
+		(*i)++;
+		while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
+		{
+			arr[*i] = ft_atoi(buf);
+			(*i)++;
+			free(buf);
+		}
+		*i = 0;
+	}
+}
+
+void even_i(int fd, short *i, short arr[52], char *buf)
+{
+	if (*i % 2 == 0 && ft_atoi(buf) > arr[*i])
+	{
+		free(buf);
+		while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
+			free(buf);
+		*i = 0;
+		return ;
+	}
+	if (*i % 2 == 0 && ft_atoi(buf) < arr[*i])
+	{
+		arr[*i] = ft_atoi(buf);
+		free(buf);
+		(*i)++;
+		while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
+		{
+			arr[*i] = ft_atoi(buf);
+			(*i)++;
+			free(buf);
+		}
+		*i = 0;
+		return ;
+	}
+	else
+		(*i)++;
+}
+
+void loop_fun(char *buf, int fd, short arr[52])
+{
+	short i;
+	int fl;
+
 	i = 0;
+	fl = 0;
 	while(get_next_line(fd, &buf) == 1)
 	{
 		if (buf[0] == 'A' || buf[0] == 'B')
@@ -269,28 +329,7 @@ void find_best_solution(int fd, t_fill *list, short border)
 			continue;
 		}
 		if (fl && i % 2 == 1)
-		{
-			if (ft_atoi(buf) > arr[i])
-			{
-				free(buf);
-				while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
-					free(buf);
-			}
-			else if (ft_atoi(buf) > arr[i])
-			{
-				arr[i] = ft_atoi(buf);
-				free(buf);
-				i++;
-				while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
-				{
-					arr[i] = ft_atoi(buf);
-					i++;
-					free(buf);
-				}
-				i = 0;
-				continue;
-			}
-		}
+			odd_j(fd, &i, arr, buf);
 		if (fl)
 			fl = 0;
 		if (i % 2 == 0 && ft_atoi(buf) == arr[i])
@@ -300,33 +339,15 @@ void find_best_solution(int fd, t_fill *list, short border)
 			fl = 1;
 			continue;
 		}
-		if (i % 2 == 0 && ft_atoi(buf) > arr[i])
-		{
-			free(buf);
-			while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
-				free(buf);
-			i = 0;
-			continue;
-		}
-		if (i % 2 == 0 && ft_atoi(buf) < arr[i])
-		{
-			arr[i] = ft_atoi(buf);
-			free(buf);
-			i++;
-			while(get_next_line(fd, &buf) == 1 && buf[0] != 'A')
-			{
-				arr[i] = ft_atoi(buf);
-				i++;
-				free(buf);
-			}
-			i = 0;
-			continue;
-		}
-		else
-			i++;
+		even_i(fd, &i, arr, buf);
 	}
+}
+
+void fill_list(t_fill *tmp, short arr[52])
+{
+	short i;
+
 	i = 0;
-	tmp = list;
 	while(arr[i] != -1)
 	{
 		if (i % 2 == 0 && i != 0)
@@ -339,9 +360,22 @@ void find_best_solution(int fd, t_fill *list, short border)
 			tmp->j = arr[i];
 		i++;
 	}
-	tmp = list;
-	while (tmp)
-		tmp = tmp->next;
+}
+
+void find_best_solution(int fd, t_fill *list, short border)
+{
+	short arr[52];
+	char *buf;
+	short i;
+	short fl;
+
+	fl = 0;
+	fill_arr(fd, border, arr);
+	i = 0;
+	buf = 0;
+	loop_fun(buf, fd, arr);
+	i = 0;
+	fill_list(list, arr);
 	hard_draw(list, border, 2);
 }
 
@@ -444,7 +478,7 @@ void	triple_solver(t_p index, int fd, t_fill *tmp, short t[14])
 		for_solver3(tmp, index.border, fd, t);
 	if (index.i == index.border - 1 && index.j == index.border - 1
 	&& tmp->prev && index.border + 1 >= g_old_border && is_last(tmp, index.border, t))
-		for_solver1(fd, index.border, tmp); 
+		for_solver1(fd, index.border, tmp);
 	if (index.i == index.border - 1 && index.j == index.border - 1
 	&& index.border + 1 > g_old_border && tmp->prev)
 		solver(tmp->prev, t, tmp->prev->border, fd);
