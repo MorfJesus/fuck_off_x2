@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 20:38:59 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/16 23:04:43 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/16 23:36:09 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	find_best_solution(int fd, t_fill *list, short border)
 	loop_fun(buf, fd, arr);
 	i = 0;
 	fill_list(list, arr);
-	hard_draw(list, border, 2);
+	hard_draw(list, border, 1);
 }
 
 void	solver(t_fill *tmp, short *t, short border, int fd)

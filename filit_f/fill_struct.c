@@ -6,7 +6,7 @@
 /*   By: acarole <acarole@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 18:24:57 by eleanna           #+#    #+#             */
-/*   Updated: 2019/11/10 20:32:57 by acarole          ###   ########.fr       */
+/*   Updated: 2019/11/16 23:51:36 by acarole          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,24 @@ void	set_sizes(char *str, short int *width, short int *height)
 	}
 }
 
+void debug(int n)
+{
+    int i;
+    i = 0;
+    while (n >> 1)
+    {
+        if (i % 4 == 0 && i != 0)
+            printf("\n");
+   if (n & 1)
+       printf("1");
+   else
+       printf("0");
+   n >>= 1;
+        i++;
+    }
+    printf("\n");
+}
+
 t_fill	*add_list(t_fill *list, char *str)
 {
 	t_fill *tmp;
@@ -87,6 +105,7 @@ t_fill	*add_list(t_fill *list, char *str)
 	if (!(new = (t_fill *)malloc(sizeof(t_fill))))
 		return (NULL);
 	fill_n(str, &(new->n));
+	debug(new->n);
 	new->next = 0;
 	new->i = -1;
 	new->j = -1;
