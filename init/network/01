@@ -1,0 +1,1 @@
+ifconfig -a | grep mtu | awk '{print $1}' | sed 's/.$//'

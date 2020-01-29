@@ -1,0 +1,4 @@
+All info is located in /etc/resolv.conf so calling
+Call cat /etc/resolv.conf
+Look for lines starting with "nameserver"
+Alternatively: call cat /etc/resolv.conf | grep nameserver

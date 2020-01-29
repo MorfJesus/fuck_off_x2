@@ -1,0 +1,4 @@
+Use whois slash16.org
+Look for lines starting with "Name Server"
+Alternatively:
+whois slash16.org | grep "Name Server" | awk {'print $3'}

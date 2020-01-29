@@ -1,0 +1,2 @@
+graphical: su <USERNAME> then type in the password
+SSH: ssh <USERNAME>@<IP>
