@@ -1,1 +1,0 @@
-netstat -rn | grep default | awk 'NR==1{print $2}'

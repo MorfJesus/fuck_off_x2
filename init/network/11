@@ -1,5 +1,0 @@
-Run "traceroute slash16.org"
-1st line is this pc's router
-2nd line is NAT router which connects us to the outside world
-3rd line is the public IP it connects us to
-What we need is the 2nd line

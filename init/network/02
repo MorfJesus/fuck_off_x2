@@ -1,2 +1,0 @@
-ifconfig en0 | grep broadcast | awk '{print $6}'
-arp -a | awk '{print $2}' | sed 's/.//' | sed 's/.$//'

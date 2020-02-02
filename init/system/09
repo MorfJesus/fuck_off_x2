@@ -1,1 +1,0 @@
-who | awk '{print $1}'

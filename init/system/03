@@ -1,2 +1,0 @@
-the /etc/hostname file where you replace the old name with the new one then find all references to the old name and replace them as well
-reboot after that

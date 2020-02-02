@@ -1,1 +1,0 @@
-systemctl list-unit-files | grep enabled | grep service | awk {'print $1'} | sed 's@\.service@@'
