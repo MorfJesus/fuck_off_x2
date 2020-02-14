@@ -128,11 +128,9 @@ int deal_key(int key, t_fdf *fdf)
 		j = 0;
 		while(j < (*fdf).width)
 		{
-			//printf("%d\t%d\n", p[i][j], k);
-			(*fdf).point[k].y = -(((j * 20 * (*fdf).zoom + i * 20 * (*fdf).zoom) * sin(30)) + (*fdf).p[i][j] * (*fdf).scale) - (*fdf).shift_y;
-			(*fdf).point[k].x = (j * 300 * (*fdf).zoom - i * 200 * (*fdf).zoom) * cos(30) + (*fdf).shift_x;
-			(*fdf).point[k].clr = add_clr(CYAN, NEON_PINK, (*fdf).p[i][j] / 10.0);
-			//printf("%d\n", point[k].clr);
+			(*fdf).point[k].y = -(((j * 5 * (*fdf).zoom + i * 5 * (*fdf).zoom) * sin(30)) + (*fdf).p[i][j] * (*fdf).scale) - (*fdf).shift_y;
+			(*fdf).point[k].x = (j * 75 * (*fdf).zoom - i * 50 * (*fdf).zoom) * cos(30) + (*fdf).shift_x;
+			(*fdf).point[k].clr = add_clr(PURPLE, NEON_PINK, (*fdf).p[i][j] / 10.0);
 			k++;
 			j++;
 		}
@@ -201,7 +199,7 @@ int main(int argc, char **argv)
 	}
 	close(fd);
 	win.mlx_ptr = mlx_init();
-	win.win_ptr = mlx_new_window(win.mlx_ptr, 2000, 1600, "heh");
+	win.win_ptr = mlx_new_window(win.mlx_ptr, 800, 800, "heh");
 	// img_ptr = mlx_new_image(mlx_ptr, 800, 600);
 	// img = mlx_get_data_addr(img_ptr, &bpp, &size_line, &endian);
 	// mlx_put_image_to_window(mlx_ptr, win_ptr, img_ptr, 0, 0);
@@ -213,8 +211,8 @@ int main(int argc, char **argv)
 		while(j < width)
 		{
 			//printf("%d\t%d\n", p[i][j], k);
-			point[k].y = -(((j * 10 * 2 + i * 10 * 2) * sin(30)) + p[i][j] * 3);
-			point[k].x = (j * 150 * 2 - i * 100 * 2) * cos(30);
+			point[k].y = -(((j * 5 + i * 5) * sin(30)) + p[i][j] * 1.5);
+			point[k].x = (j * 75 - i * 50) * cos(30);
 			point[k].clr = add_clr(CYAN, NEON_PINK, p[i][j] / 10.0);
 			//printf("%d\n", point[k].clr);
 			k++;
@@ -236,7 +234,7 @@ int main(int argc, char **argv)
 	fdf.width = width;
 	fdf.height = height;
 	fdf.p = p;
-	fdf.scale = 3;
+	fdf.scale = 1.5;
 	fdf.shift_x = 0;
 	fdf.shift_y = 0;
 	fdf.zoom = 1;
