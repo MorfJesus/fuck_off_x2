@@ -8,11 +8,13 @@
 #include "libft/get_next_line.h"
 
 #define CYAN 65535
+#define GREEN 65280
 #define PURPLE 8224255
 #define WHITE 0xFFFFFF
 #define BLACK 0
 #define NEON_PINK 16646554
 #define RED 16711680
+#define PISS 16776960
 //COLORS ARE B G R A FOR WHATEVER FUCKING REASON
 
 int		add_clr(int clr1, int clr2, double coef)
@@ -24,7 +26,7 @@ int		add_clr(int clr1, int clr2, double coef)
 	+ ((clr1>>0 & 0xFF) + (int)(((clr2>>0 & 0xFF) - (clr1>>0 & 0xFF)) * coef)));
 }
 
-void	ft_draw_line(t_p st_p, t_p en_p, t_win win)
+void	ft_draw_line(t_p st_p, t_p en_p, t_win win, t_fdf fdf)
 {
 	double	tx;
 	float		dx;
@@ -37,7 +39,8 @@ void	ft_draw_line(t_p st_p, t_p en_p, t_win win)
 	dy = en_p.y - st_p.y;
 	while (tx <= 1)
 	{
-		mlx_pixel_put(win.mlx_ptr, win.win_ptr, st_p.x + 200 + (dx * tx), st_p.y + 200 + (dy * tx), add_clr(st_p.clr, en_p.clr, tx));//st_p.clr + ft_abs(cl_dif * tx));
+		mlx_pixel_put(win.mlx_ptr, win.win_ptr, st_p.x - floor(fdf.width * fdf.zoom / 2) + (win.win_width / 2) + (dx * tx),
+		st_p.y - floor(fdf.height * fdf.zoom / 2) + win.win_height / 2 +(dy * tx), add_clr(st_p.clr, en_p.clr, tx));
 		tx += 1.0 / sqrt((dx * dx) + (dy * dy));
 	}
 }
@@ -101,20 +104,14 @@ int deal_key(int key, t_fdf *fdf)
 	int j = 0;
 	if (key == 53)
 		exit(0);
-	if (key == 24 && (*fdf).zoom < 3.8)
-	{
-		(*fdf).zoom+=0.1;
-		(*fdf).scale += 0.3;
-	}
+	if (key == 24)
+		(*fdf).zoom+=1;
 	if (key == 27 && (*fdf).zoom > 0.1)
-	{
-		(*fdf).zoom-=0.1;
-		(*fdf).scale-=0.3;
-	}
-	if (key == 78 && (*fdf).scale > 0.3)
-		(*fdf).scale-=0.5;
+		(*fdf).zoom-=1;
+	if (key == 78 && (*fdf).scale > 0)
+		(*fdf).scale-=0.05;
 	if (key == 69)
-		(*fdf).scale+=0.5;
+		(*fdf).scale+=0.05;
 	if (key == 126)
 		(*fdf).shift_y+=10;
 	if (key == 125)
@@ -123,14 +120,25 @@ int deal_key(int key, t_fdf *fdf)
 		(*fdf).shift_x+=10;
 	if (key == 123)
 		(*fdf).shift_x-=10;
+	if (key == 92)
+		(*fdf).g-=0.1;
+	if (key == 89)
+		(*fdf).g+=0.1;
 	while(i < (*fdf).height)
 	{
 		j = 0;
 		while(j < (*fdf).width)
 		{
-			(*fdf).point[k].y = -(((j * 5 * (*fdf).zoom + i * 5 * (*fdf).zoom) * sin(30)) + (*fdf).p[i][j] * (*fdf).scale) - (*fdf).shift_y;
-			(*fdf).point[k].x = (j * 75 * (*fdf).zoom - i * 50 * (*fdf).zoom) * cos(30) + (*fdf).shift_x;
-			(*fdf).point[k].clr = add_clr(PURPLE, NEON_PINK, (*fdf).p[i][j] / 10.0);
+			(*fdf).point[k].x1 = (j - i) * cos(0.523599) * (*fdf).zoom;
+			(*fdf).point[k].y1 = (-(*fdf).p[i][j] * (*fdf).scale + (j + i) * sin(0.523599)) * (*fdf).zoom;
+			(*fdf).point[k].x = ((*fdf).point[k].x1) * cos((*fdf).g ) - ((*fdf).point[k].y1) * sin((*fdf).g);
+			(*fdf).point[k].y = ((*fdf).point[k].x1) * sin((*fdf).g) + ((*fdf).point[k].y1) * cos((*fdf).g);
+			(*fdf).point[k].x1 = (*fdf).point[k].x;
+			(*fdf).point[k].y1 = (*fdf).point[k].y;
+
+			(*fdf).point[k].x += (*fdf).shift_x;
+			(*fdf).point[k].y -= (*fdf).shift_y;
+			(*fdf).point[k].clr = add_clr(CYAN, NEON_PINK, (*fdf).p[i][j] / 9.0);
 			k++;
 			j++;
 		}
@@ -140,12 +148,11 @@ int deal_key(int key, t_fdf *fdf)
 	while(k < (*fdf).width * (*fdf).height - 1)
 	{
 		if ((k + 1) % ((*fdf).width) != 0)
-			ft_draw_line((*fdf).point[k], (*fdf).point[k + 1], (*fdf).win);
+			ft_draw_line((*fdf).point[k], (*fdf).point[k + 1], (*fdf).win, *fdf);
 		if (k + (*fdf).width < (*fdf).width * (*fdf).height)
-		 ft_draw_line((*fdf).point[k], (*fdf).point[k + (*fdf).width], (*fdf).win);
+		 ft_draw_line((*fdf).point[k], (*fdf).point[k + (*fdf).width], (*fdf).win, *fdf);
 		k++;
 	}
-	printf("%f\n", (*fdf).zoom);
 	mlx_clear_window((*fdf).win.mlx_ptr, (*fdf).win.win_ptr);
 	return(0);
 }
@@ -198,11 +205,24 @@ int main(int argc, char **argv)
 		i++;
 	}
 	close(fd);
+	win.win_width = 1200;
+	win.win_height = 1200;
 	win.mlx_ptr = mlx_init();
-	win.win_ptr = mlx_new_window(win.mlx_ptr, 800, 800, "heh");
+	win.win_ptr = mlx_new_window(win.mlx_ptr, win.win_width, win.win_height, "heh");
 	// img_ptr = mlx_new_image(mlx_ptr, 800, 600);
 	// img = mlx_get_data_addr(img_ptr, &bpp, &size_line, &endian);
 	// mlx_put_image_to_window(mlx_ptr, win_ptr, img_ptr, 0, 0);
+	fdf.win = win;
+	fdf.point = point;
+	fdf.width = width;
+	fdf.height = height;
+	printf("%d\t%d\n", width, height);
+	fdf.p = p;
+	fdf.scale = 0.1;
+	fdf.shift_x = 0;
+	fdf.shift_y = 0;
+	fdf.zoom = 20;
+	fdf.g = -0.6;
 	i = 0;
 	k = 0;
 	while(i < height)
@@ -211,8 +231,10 @@ int main(int argc, char **argv)
 		while(j < width)
 		{
 			//printf("%d\t%d\n", p[i][j], k);
-			point[k].y = -(((j * 5 + i * 5) * sin(30)) + p[i][j] * 1.5);
-			point[k].x = (j * 75 - i * 50) * cos(30);
+			point[k].x = (j - i) * cos(0.523599) * 20;
+			point[k].y = -p[i][j] + (j + i) * sin(0.523599) * 20;
+			// point[k].y = -(((j + i) * sin(30) * 5) + p[i][j] * 1.5) + win.win_height / 2;
+			// point[k].x = (j- i) * cos(30) * 75 + win.win_width / 2;
 			point[k].clr = add_clr(CYAN, NEON_PINK, p[i][j] / 10.0);
 			//printf("%d\n", point[k].clr);
 			k++;
@@ -224,20 +246,13 @@ int main(int argc, char **argv)
 	while(k < width * height - 1)
 	{
 		if ((k + 1) % (width) != 0)
-			ft_draw_line(point[k], point[k + 1], win);
+			ft_draw_line(point[k], point[k + 1], win, fdf);
 		if (k + width < width * height)
-		 ft_draw_line(point[k], point[k + width], win);
+		 ft_draw_line(point[k], point[k + width], win, fdf);
 		k++;
 	}
-	fdf.win = win;
-	fdf.point = point;
-	fdf.width = width;
-	fdf.height = height;
-	fdf.p = p;
-	fdf.scale = 1.5;
-	fdf.shift_x = 0;
-	fdf.shift_y = 0;
-	fdf.zoom = 1;
+	// fdf.right_side = 1;
+	// fdf.down_side = 1;
 	mlx_key_hook(win.win_ptr, deal_key, &fdf);
 	mlx_loop(win.mlx_ptr);
 }
