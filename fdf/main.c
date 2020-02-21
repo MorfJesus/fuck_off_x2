@@ -40,12 +40,12 @@ void	turn_iso(t_fdf *fdf)
 		j = 0;
 		while(j < (*fdf).width)
 		{
-			(*fdf).point[k].x1 = (j - i) * cos(0.523599) * (*fdf).zoom;
-			(*fdf).point[k].y1 = (-(*fdf).p[i][j] * (*fdf).scale + (j + i) * sin(0.523599)) * (*fdf).zoom;
-			(*fdf).point[k].x = ((*fdf).point[k].x1) * cos((*fdf).g ) - ((*fdf).point[k].y1) * sin((*fdf).g);
-			(*fdf).point[k].y = ((*fdf).point[k].x1) * sin((*fdf).g) + ((*fdf).point[k].y1) * cos((*fdf).g);
-			(*fdf).point[k].x1 = (*fdf).point[k].x;
-			(*fdf).point[k].y1 = (*fdf).point[k].y;
+			// (*fdf).point[k].x1 = (j - i) * cos(0.523599) * (*fdf).zoom;
+			// (*fdf).point[k].y1 = (-(*fdf).p[i][j] * (*fdf).scale + (j + i) * sin(0.523599)) * (*fdf).zoom;
+			// (*fdf).point[k].x = ((*fdf).point[k].x1) * cos((*fdf).g ) - ((*fdf).point[k].y1) * sin((*fdf).g);
+			// (*fdf).point[k].y = ((*fdf).point[k].x1) * sin((*fdf).g) + ((*fdf).point[k].y1) * cos((*fdf).g);
+			// (*fdf).point[k].x1 = (*fdf).point[k].x;
+			// (*fdf).point[k].y1 = (*fdf).point[k].y;
 
 			(*fdf).point[k].x += (*fdf).shift_x;
 			(*fdf).point[k].y -= (*fdf).shift_y;
@@ -70,8 +70,8 @@ void	ft_draw_line(t_p st_p, t_p en_p, t_win win, t_fdf fdf)
 	dy = en_p.y - st_p.y;
 	while (tx <= 1)
 	{
-		mlx_pixel_put(win.mlx_ptr, win.win_ptr, st_p.x - floor(fdf.width * fdf.zoom / 2) + (win.win_width / 2) + (dx * tx),
-		st_p.y - floor(fdf.height * fdf.zoom / 2) + win.win_height / 2 +(dy * tx), add_clr(st_p.clr, en_p.clr, tx));
+		mlx_pixel_put(win.mlx_ptr, win.win_ptr, st_p.x + (dx * tx),
+		st_p.y +(dy * tx), add_clr(st_p.clr, en_p.clr, tx));
 		tx += 1.0 / sqrt((dx * dx) + (dy * dy));
 	}
 }
@@ -140,9 +140,9 @@ int deal_key(int key, t_fdf *fdf)
 	if (key == 27 && (*fdf).zoom > 0.1)
 		(*fdf).zoom-=1;
 	if (key == 78 && (*fdf).scale > 0)
-		(*fdf).scale-=0.05;
+		(*fdf).scale-=0.3;
 	if (key == 69)
-		(*fdf).scale+=0.05;
+		(*fdf).scale+=0.3;
 	if (key == 126)
 		(*fdf).shift_y+=20;
 	if (key == 125)
@@ -169,8 +169,20 @@ int deal_key(int key, t_fdf *fdf)
 		j = 0;
 		while(j < (*fdf).width)
 		{
-			(*fdf).point[k].x = j * 20 * cos((*fdf).beta * PI / 180.0) + ((*fdf).p[i][j] * sin((*fdf).beta * PI / 180.0) * (*fdf).scale);
-			(*fdf).point[k].y = i * 20 * cos((*fdf).alpha * PI / 180.0) + ((*fdf).p[i][j] * sin((*fdf).alpha * PI / 180.0) * (*fdf).scale);
+			// (*fdf).point[k].x = j * 20 * cos((*fdf).beta * PI / 180.0) + ((*fdf).p[i][j] * sin((*fdf).beta * PI / 180.0) * (*fdf).scale);
+			// (*fdf).point[k].y = i * 20 * cos((*fdf).alpha * PI / 180.0) + ((*fdf).p[i][j] * sin((*fdf).alpha * PI / 180.0) * (*fdf).scale);
+
+			(*fdf).point[k].x_old = ((*fdf).point[k].j - (*fdf).width / 2) * (*fdf).zoom;
+			(*fdf).point[k].y_old = ((*fdf).point[k].i - (*fdf).height / 2) * (*fdf).zoom;
+			// (*fdf).point[k].x = (*fdf).point[k].x_old * cos((*fdf).beta * PI / 180.0) + (*fdf).point[k].y_old * tan((PI/2 - (*fdf).alpha) * PI / 180.0) * sin((*fdf).beta * PI / 180.0);
+			// (*fdf).point[k].y = (*fdf).point[k].y_old * cos((*fdf).alpha * PI / 180.0);
+
+			(*fdf).point[k].x = ((*fdf).point[k].x_old * cos((*fdf).beta * PI / 180.0) + (*fdf).point[k].y_old * cos((*fdf).alpha * PI / 180.0) * sin((*fdf).beta * PI / 180.0)
+			+ ((*fdf).p[i][j] * sin((*fdf).beta * PI / 180.0) * sin((*fdf).alpha * PI / 180.0) * (*fdf).scale * (*fdf).zoom) + (*fdf).win.win_width / 2);
+			(*fdf).point[k].y = ((*fdf).point[k].y_old * sin((*fdf).alpha * PI / 180.0) + (*fdf).win.win_height / 2 + ((*fdf).p[i][j] * sin(((*fdf).alpha - 90) * PI / 180.0) * (*fdf).scale * (*fdf).zoom));
+
+			(*fdf).point[k].x += (*fdf).shift_x;
+			(*fdf).point[k].y -= (*fdf).shift_y;
 			// (*fdf).point[k].x1 = (j - i) * cos(0.523599) * (*fdf).zoom;
 			// (*fdf).point[k].y1 = (-(*fdf).p[i][j] * (*fdf).scale + (j + i) * sin(0.523599)) * (*fdf).zoom;
 			// (*fdf).point[k].x = ((*fdf).point[k].x1) * cos((*fdf).g ) - ((*fdf).point[k].y1) * sin((*fdf).g);
@@ -258,49 +270,50 @@ int main(int argc, char **argv)
 	fdf.point = point;
 	fdf.width = width;
 	fdf.height = height;
-	printf("%d\t%d\n", width, height);
 	fdf.p = p;
-	fdf.scale = 0.1;
+	fdf.scale = 0.2;
 	fdf.shift_x = 0;
 	fdf.shift_y = 0;
 	fdf.zoom = 20;
 	fdf.g = -0.6;
-	fdf.alpha = 0;
+	fdf.alpha = 90;
 	fdf.beta = 0;
 	i = 0;
 	k = 0;
-	// while(i < height)
-	// {
-	// 	j = 0;
-	// 	while(j < width)
-	// 	{
-	// 		//printf("%d\t%d\n", p[i][j], k);
-	//
-	// 		// point[k].x = (j - i) * cos(0.523599) * 20;
-	// 		// point[k].y = -p[i][j] + (j + i) * sin(0.523599) * 20;
-	// 		point[k].x = j * 20 + (p[i][j] * sin(alpha));
-	// 		point[k].y = i * 20 + (p[i][j] * cos(alpha));
-	// 		// point[k].y = -(((j + i) * sin(30) * 5) + p[i][j] * 1.5) + win.win_height / 2;
-	// 		// point[k].x = (j- i) * cos(30) * 75 + win.win_width / 2;
-	// 		point[k].clr = add_clr(CYAN, NEON_PINK, p[i][j] / 10.0);
-	// 		//printf("%d\n", point[k].clr);
-	// 		k++;
-	// 		j++;
-	// 	}
-	// 	i++;
-	// }
-	// k = 0;
-	// while(k < width * height - 1)
-	// {
-	// 	if ((k + 1) % (width) != 0)
-	// 		ft_draw_line(point[k], point[k + 1], win, fdf);
-	// 	if (k + width < width * height)
-	// 	 ft_draw_line(point[k], point[k + width], win, fdf);
-	// 	k++;
-	// }
+	while(i < height)
+	{
+		j = 0;
+		while(j < width)
+		{
+			//printf("%d\t%d\n", p[i][j], k);
+
+			// point[k].x = (j - i) * cos(0.523599) * 20;
+			// point[k].y = -p[i][j] + (j + i) * sin(0.523599) * 20;
+			fdf.point[k].j = j;
+			fdf.point[k].i = i;
+			fdf.point[k].x = fdf.point[k].j * fdf.zoom;
+			fdf.point[k].y = fdf.point[k].i * fdf.zoom;
+			// fdf.point[k].z = p[i][j];
+			// point[k].y = -(((j + i) * sin(30) * 5) + p[i][j] * 1.5) + win.win_height / 2;
+			// point[k].x = (j- i) * cos(30) * 75 + win.win_width / 2;
+			point[k].clr = add_clr(CYAN, NEON_PINK, p[i][j] / 10.0);
+			//printf("%d\n", point[k].clr);
+			k++;
+			j++;
+		}
+		i++;
+	}
+	k = 0;
+	while(k < width * height - 1)
+	{
+		if ((k + 1) % (width) != 0)
+			ft_draw_line(point[k], point[k + 1], win, fdf);
+		if (k + width < width * height)
+		 ft_draw_line(point[k], point[k + width], win, fdf);
+		k++;
+	}
 	// fdf.right_side = 1;
 	// fdf.down_side = 1;
 	mlx_hook(win.win_ptr, 2, 0, deal_key, &fdf);
-	//mlx_key_hook(win.win_ptr, deal_key, &fdf);
 	mlx_loop(win.mlx_ptr);
 }

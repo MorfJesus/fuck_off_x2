@@ -4,8 +4,11 @@ typedef struct	s_p
 {
 	int	x;
 	int	y;
-	int	x1;
-	int	y1;
+	int z;
+	int	i;
+	int	j;
+	int	x_old;
+	int	y_old;
 	int clr;
 }		t_p;
 
