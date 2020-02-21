@@ -21,6 +21,8 @@ typedef struct	s_win
 typedef struct	s_fdf
 {
 	double g;
+	double beta;
+	double alpha;
 	int shift_y;
 	double zoom;
 	int shift_x;

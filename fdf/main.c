@@ -15,6 +15,7 @@
 #define NEON_PINK 16646554
 #define RED 16711680
 #define PISS 16776960
+#define PI 3.14
 //COLORS ARE B G R A FOR WHATEVER FUCKING REASON
 
 int		add_clr(int clr1, int clr2, double coef)
@@ -24,6 +25,36 @@ int		add_clr(int clr1, int clr2, double coef)
 	return (((clr1>>16 & 0xFF) + (int)(((clr2>>16 & 0xFF) - (clr1>>16 & 0xFF)) * coef)) * 65536
 	+ ((clr1>>8 & 0xFF) + (int)(((clr2>>8 & 0xFF) - (clr1>>8 & 0xFF)) * coef)) * 256
 	+ ((clr1>>0 & 0xFF) + (int)(((clr2>>0 & 0xFF) - (clr1>>0 & 0xFF)) * coef)));
+}
+
+void	turn_iso(t_fdf *fdf)
+{
+	int i;
+	int j;
+	int k;
+
+	i = 0;
+	k = 0;
+	while(i < (*fdf).height)
+	{
+		j = 0;
+		while(j < (*fdf).width)
+		{
+			(*fdf).point[k].x1 = (j - i) * cos(0.523599) * (*fdf).zoom;
+			(*fdf).point[k].y1 = (-(*fdf).p[i][j] * (*fdf).scale + (j + i) * sin(0.523599)) * (*fdf).zoom;
+			(*fdf).point[k].x = ((*fdf).point[k].x1) * cos((*fdf).g ) - ((*fdf).point[k].y1) * sin((*fdf).g);
+			(*fdf).point[k].y = ((*fdf).point[k].x1) * sin((*fdf).g) + ((*fdf).point[k].y1) * cos((*fdf).g);
+			(*fdf).point[k].x1 = (*fdf).point[k].x;
+			(*fdf).point[k].y1 = (*fdf).point[k].y;
+
+			(*fdf).point[k].x += (*fdf).shift_x;
+			(*fdf).point[k].y -= (*fdf).shift_y;
+			(*fdf).point[k].clr = add_clr(CYAN, NEON_PINK, (*fdf).p[i][j] / 9.0);
+			k++;
+			j++;
+		}
+		i++;
+	}
 }
 
 void	ft_draw_line(t_p st_p, t_p en_p, t_win win, t_fdf fdf)
@@ -113,31 +144,42 @@ int deal_key(int key, t_fdf *fdf)
 	if (key == 69)
 		(*fdf).scale+=0.05;
 	if (key == 126)
-		(*fdf).shift_y+=10;
+		(*fdf).shift_y+=20;
 	if (key == 125)
-		(*fdf).shift_y-=10;
+		(*fdf).shift_y-=20;
 	if (key == 124)
-		(*fdf).shift_x+=10;
+		(*fdf).shift_x+=20;
 	if (key == 123)
-		(*fdf).shift_x-=10;
-	if (key == 92)
-		(*fdf).g-=0.1;
-	if (key == 89)
-		(*fdf).g+=0.1;
+		(*fdf).shift_x-=20;
+	// if (key == 92)
+	// 	(*fdf).g+=0.05;
+	// if (key == 89)
+	// 	(*fdf).g-=0.05;
+	//	turn_iso(fdf);
+	if (key == 91)
+		(*fdf).alpha-=5.0;
+	if (key == 84)
+		(*fdf).alpha+=5.0;
+	if (key == 86)
+		(*fdf).beta-=5.0;
+	if (key == 88)
+		(*fdf).beta+=5.0;
 	while(i < (*fdf).height)
 	{
 		j = 0;
 		while(j < (*fdf).width)
 		{
-			(*fdf).point[k].x1 = (j - i) * cos(0.523599) * (*fdf).zoom;
-			(*fdf).point[k].y1 = (-(*fdf).p[i][j] * (*fdf).scale + (j + i) * sin(0.523599)) * (*fdf).zoom;
-			(*fdf).point[k].x = ((*fdf).point[k].x1) * cos((*fdf).g ) - ((*fdf).point[k].y1) * sin((*fdf).g);
-			(*fdf).point[k].y = ((*fdf).point[k].x1) * sin((*fdf).g) + ((*fdf).point[k].y1) * cos((*fdf).g);
-			(*fdf).point[k].x1 = (*fdf).point[k].x;
-			(*fdf).point[k].y1 = (*fdf).point[k].y;
-
-			(*fdf).point[k].x += (*fdf).shift_x;
-			(*fdf).point[k].y -= (*fdf).shift_y;
+			(*fdf).point[k].x = j * 20 * cos((*fdf).beta * PI / 180.0) + ((*fdf).p[i][j] * sin((*fdf).beta * PI / 180.0) * (*fdf).scale);
+			(*fdf).point[k].y = i * 20 * cos((*fdf).alpha * PI / 180.0) + ((*fdf).p[i][j] * sin((*fdf).alpha * PI / 180.0) * (*fdf).scale);
+			// (*fdf).point[k].x1 = (j - i) * cos(0.523599) * (*fdf).zoom;
+			// (*fdf).point[k].y1 = (-(*fdf).p[i][j] * (*fdf).scale + (j + i) * sin(0.523599)) * (*fdf).zoom;
+			// (*fdf).point[k].x = ((*fdf).point[k].x1) * cos((*fdf).g ) - ((*fdf).point[k].y1) * sin((*fdf).g);
+			// (*fdf).point[k].y = ((*fdf).point[k].x1) * sin((*fdf).g) + ((*fdf).point[k].y1) * cos((*fdf).g);
+			// (*fdf).point[k].x1 = (*fdf).point[k].x;
+			// (*fdf).point[k].y1 = (*fdf).point[k].y;
+			//
+			// (*fdf).point[k].x += (*fdf).shift_x;
+			// (*fdf).point[k].y -= (*fdf).shift_y;
 			(*fdf).point[k].clr = add_clr(CYAN, NEON_PINK, (*fdf).p[i][j] / 9.0);
 			k++;
 			j++;
@@ -223,36 +265,42 @@ int main(int argc, char **argv)
 	fdf.shift_y = 0;
 	fdf.zoom = 20;
 	fdf.g = -0.6;
+	fdf.alpha = 0;
+	fdf.beta = 0;
 	i = 0;
 	k = 0;
-	while(i < height)
-	{
-		j = 0;
-		while(j < width)
-		{
-			//printf("%d\t%d\n", p[i][j], k);
-			point[k].x = (j - i) * cos(0.523599) * 20;
-			point[k].y = -p[i][j] + (j + i) * sin(0.523599) * 20;
-			// point[k].y = -(((j + i) * sin(30) * 5) + p[i][j] * 1.5) + win.win_height / 2;
-			// point[k].x = (j- i) * cos(30) * 75 + win.win_width / 2;
-			point[k].clr = add_clr(CYAN, NEON_PINK, p[i][j] / 10.0);
-			//printf("%d\n", point[k].clr);
-			k++;
-			j++;
-		}
-		i++;
-	}
-	k = 0;
-	while(k < width * height - 1)
-	{
-		if ((k + 1) % (width) != 0)
-			ft_draw_line(point[k], point[k + 1], win, fdf);
-		if (k + width < width * height)
-		 ft_draw_line(point[k], point[k + width], win, fdf);
-		k++;
-	}
+	// while(i < height)
+	// {
+	// 	j = 0;
+	// 	while(j < width)
+	// 	{
+	// 		//printf("%d\t%d\n", p[i][j], k);
+	//
+	// 		// point[k].x = (j - i) * cos(0.523599) * 20;
+	// 		// point[k].y = -p[i][j] + (j + i) * sin(0.523599) * 20;
+	// 		point[k].x = j * 20 + (p[i][j] * sin(alpha));
+	// 		point[k].y = i * 20 + (p[i][j] * cos(alpha));
+	// 		// point[k].y = -(((j + i) * sin(30) * 5) + p[i][j] * 1.5) + win.win_height / 2;
+	// 		// point[k].x = (j- i) * cos(30) * 75 + win.win_width / 2;
+	// 		point[k].clr = add_clr(CYAN, NEON_PINK, p[i][j] / 10.0);
+	// 		//printf("%d\n", point[k].clr);
+	// 		k++;
+	// 		j++;
+	// 	}
+	// 	i++;
+	// }
+	// k = 0;
+	// while(k < width * height - 1)
+	// {
+	// 	if ((k + 1) % (width) != 0)
+	// 		ft_draw_line(point[k], point[k + 1], win, fdf);
+	// 	if (k + width < width * height)
+	// 	 ft_draw_line(point[k], point[k + width], win, fdf);
+	// 	k++;
+	// }
 	// fdf.right_side = 1;
 	// fdf.down_side = 1;
-	mlx_key_hook(win.win_ptr, deal_key, &fdf);
+	mlx_hook(win.win_ptr, 2, 0, deal_key, &fdf);
+	//mlx_key_hook(win.win_ptr, deal_key, &fdf);
 	mlx_loop(win.mlx_ptr);
 }
