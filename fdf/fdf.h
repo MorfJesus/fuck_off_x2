@@ -23,6 +23,7 @@ typedef struct	s_win
 
 typedef struct	s_fdf
 {
+	int is_iso;
 	double g;
 	double beta;
 	double alpha;
