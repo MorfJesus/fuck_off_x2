@@ -6,13 +6,11 @@
 #include "fdf.h"
 #include "libft/libft.h"
 #include "libft/get_next_line.h"
-
 #define CYAN 65535
 #define WHITE 0xFFFFFF
 #define BLACK 0
 #define NEON_PINK 16646554
 #define PI 3.14
-//COLORS ARE B G R A FOR WHATEVER FUCKING REASON
 
 int		add_clr(int clr1, int clr2, double coef)
 {
@@ -237,8 +235,44 @@ void technicalities(t_fdf *fdf)
 	mlx_put_image_to_window((*fdf).win.mlx_ptr, (*fdf).win.win_ptr, (*fdf).img_ptr, 0, 0);
 }
 
-void filling_window(fdf)
+void fill_points(t_fdf *fdf)
 {
+	int i;
+	int k;
+	int j;
+
+	i = 0;
+	k = 0;
+	while(i < (*fdf).height)
+	{
+		j = 0;
+		while(j < (*fdf).width)
+		{
+			(*fdf).point[k].j = j;
+			(*fdf).point[k].i = i;
+			(*fdf).point[k].x = (*fdf).point[k].j * (*fdf).zoom + (*fdf).win.win_width  * 5 / 8 - (*fdf).width / 2 * (*fdf).zoom;
+			(*fdf).point[k].y = (*fdf).point[k].i * (*fdf).zoom + (*fdf).win.win_height / 2 - (*fdf).height / 2 * (*fdf).zoom;
+			(*fdf).point[k].z = (*fdf).p[i][j];
+			(*fdf).point[k].clr = add_clr(CYAN, NEON_PINK, (*fdf).p[i][j] / 10.0);
+			k++;
+			j++;
+		}
+		i++;
+	}
+}
+
+void fdf_fuckery(t_fdf *fdf, char *str)
+{
+	(*fdf).width = get_width(str);
+	(*fdf).height = get_height(str);
+	(*fdf).scale = 0.1;
+	(*fdf).shift_x = 0;
+	(*fdf).shift_y = 0;
+	(*fdf).zoom = 25;
+	(*fdf).alpha = 90;
+	(*fdf).beta = 0;
+	(*fdf).is_iso = 0;
+	(*fdf).point = (t_p*)malloc(sizeof(t_p) * (*fdf).width * (*fdf).height);
 }
 
 int main(int argc, char **argv)
@@ -246,29 +280,24 @@ int main(int argc, char **argv)
 	t_fdf fdf;
 	int i;
 	int j;
-	int k;
 	int fd;
 	char *line;
-	int **p;
-	//t_p *point;
 	char **str;
 
 	i = 0;
-	fdf.width = get_width(argv[1]);
-	fdf.height = get_height(argv[1]);
-	fdf.point = (t_p*)malloc(sizeof(t_p) * fdf.width * fdf.height);
+	fdf_fuckery(&fdf, argv[1]);
 	fd = open(argv[1], O_RDONLY);
-	p = (int**)malloc(sizeof(int) * fdf.width * fdf.height);
-	if (!p || !fdf.point)
+	fdf.p = (int**)malloc(sizeof(int) * fdf.width * fdf.height);
+	if (!fdf.p || !fdf.point)
 		return(0);
 	while(get_next_line(fd, &line))
 	{
 		j = 0;
-		p[i] = (int*)malloc(sizeof(int) * fdf.width);
+		fdf.p[i] = (int*)malloc(sizeof(int) * fdf.width);
 		str = ft_strsplit(line, ' ');
 		while(str[j])
 		{
-			p[i][j] = ft_atoi(str[j]);
+			fdf.p[i][j] = ft_atoi(str[j]);
 			free(str[j]);
 			j++;
 		}
@@ -278,41 +307,8 @@ int main(int argc, char **argv)
 	}
 	close(fd);
 	technicalities(&fdf);
-	fdf.p = p;
-	fdf.scale = 0.1;
-	fdf.shift_x = 0;
-	fdf.shift_y = 0;
-	fdf.zoom = 25;
-	fdf.alpha = 90;
-	fdf.beta = 0;
-	fdf.is_iso = 0;
-	i = 0;
-	k = 0;
-	while(i < fdf.height)
-	{
-		j = 0;
-		while(j < fdf.width)
-		{
-			fdf.point[k].j = j;
-			fdf.point[k].i = i;
-			fdf.point[k].x = fdf.point[k].j * fdf.zoom + fdf.win.win_width  * 5 / 8 - fdf.width / 2 * fdf.zoom;
-			fdf.point[k].y = fdf.point[k].i * fdf.zoom + fdf.win.win_height / 2 - fdf.height / 2 * fdf.zoom;
-			fdf.point[k].z = p[i][j];
-			fdf.point[k].clr = add_clr(CYAN, NEON_PINK, p[i][j] / 10.0);
-			k++;
-			j++;
-		}
-		i++;
-	}
-	k = 0;
-	while(k < fdf.width * fdf.height - 1)
-	{
-		if ((k + 1) % (fdf.width) != 0)
-			ft_draw_line(fdf.point[k], fdf.point[k + 1], fdf.win, fdf);
-		if (k + fdf.width < fdf.width * fdf.height)
-		 ft_draw_line(fdf.point[k], fdf.point[k + fdf.width], fdf.win, fdf);
-		k++;
-	}
+	fill_points(&fdf);
+	connect_dots(&fdf);
 	mlx_hook(fdf.win.win_ptr, 2, 0, deal_key, &fdf);
 	mlx_loop(fdf.win.mlx_ptr);
 }
