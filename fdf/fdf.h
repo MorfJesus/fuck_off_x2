@@ -23,8 +23,8 @@ typedef struct	s_win
 
 typedef struct	s_fdf
 {
+	void* img_ptr;
 	int is_iso;
-	double g;
 	double beta;
 	double alpha;
 	int shift_y;
